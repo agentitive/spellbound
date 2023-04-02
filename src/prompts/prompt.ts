@@ -13,7 +13,7 @@ type FillPromptParams = {
 
 const fillPrompt = async (params: FillPromptParams): Promise<string> => {
   // Read file
-  const promptFilePath = path.join(__dirname, "src", "prompt.md")
+  const promptFilePath = path.join(__dirname, "assets", "prompt.md")
   const sourcePrompt = await fs.readFile(promptFilePath, "utf-8")
 
   // Fill out the prompt

@@ -1,5 +1,4 @@
 import * as https from "https"
-import { ClientRequest, IncomingMessage } from "http"
 
 type Callbacks = {
   onData: (chunk: string) => void
@@ -116,11 +115,10 @@ export async function streamingCompletion(
 
   let buffer = ""
 
-  let _res: IncomingMessage
+  let _resolve: (value: string | PromiseLike<string>) => void
+  let _reject: (reason?: any) => void
 
   const req = https.request(options, (res) => {
-    _res = res
-
     res.on("data", (chunk) => {
       const completion = parseCompletionDataChunk(chunk)
 
@@ -135,12 +133,14 @@ export async function streamingCompletion(
       if (callbacks.onError) {
         callbacks.onError(new Error(`Data error: ${error}`))
       }
+      _reject(error)
     })
 
     res.on("end", () => {
       if (callbacks.onEnd) {
         callbacks.onEnd()
       }
+      _resolve(buffer)
     })
   })
 
@@ -148,53 +148,14 @@ export async function streamingCompletion(
     if (callbacks.onError) {
       callbacks.onError(new Error(`Request error: ${error}`))
     }
+    _reject(error)
   })
 
   req.write(JSON.stringify({ model, messages, stream: true }))
   req.end()
 
   return new Promise((resolve, reject) => {
-    req.on("close", () => {
-      resolve("Request closed")
-    })
-
-    req.on("error", (error) => {
-      reject(error)
-    })
-
-    _res.on("error", (error) => {
-      reject(error)
-    })
-
-    _res.on("end", () => {
-      resolve(buffer)
-    })
+    _resolve = resolve
+    _reject = reject
   })
 }
-
-const apiKey = process.env.OPENAI_API_KEY
-
-if (!apiKey) {
-  console.error("Missing OpenAI API key")
-  process.exit(1)
-}
-
-;(async () => {
-  const models = await listModels(apiKey)
-  console.log("Available models:", models)
-
-  const modelName = "gpt-4"
-  const messages = [{ role: "user", content: "Hello" }]
-
-  const req = streamingCompletion(apiKey, modelName, messages, {
-    onData: (chunk) => {
-      console.log(chunk)
-    },
-    onError: (error) => {
-      console.error(error)
-    },
-    onEnd: () => {
-      console.log("Request ended")
-    },
-  })
-})()
