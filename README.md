@@ -15,6 +15,21 @@ To set up the local development environment for the Spellbound extension, see th
 
 To use Spellbound, simply interact with your codebase as usual. Whenever you need help, type your request using natural language in a comment or in the Spellbound dialog. Spellbound will use the OpenAI API to help you generate code, troubleshoot, and offer suggestions.
 
+## Tools
+
+The following tools are available for use in Spellbound. The underlying AI model uses tools to solve open-ended tasks.
+
+| Tool                     | Description                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| cat {path}               | Read the content of a file at the given path.                                          |
+| ls {path, recursive?}    | List files and folders at the given path.                                              |
+| search {description}     | Search for a file or relevant information by description, via vector embedding search. |
+| write {path, contents}   | Write (or overwrite) the given contents into the specified file.                       |
+| replace {path, old, new} | Replace all occurrences of `old` with `new` in the specified file.                     |
+| ask {question}           | Ask a question to the user.                                                            |
+| npm {script}             | Run an npm script (e.g., `npm run [script]`).                                          |
+| done {output?}           | Indicate that you are done with the task.                                              |
+
 ## Features
 
 - Code generation based on natural language input
