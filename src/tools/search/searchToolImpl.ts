@@ -31,9 +31,10 @@ const calculateScores = (matches: ScoredVector[]) => {
 
 export async function searchToolImpl(params: SearchToolInterface) {
   const embedding = await getEmbedding(params.description)
-  const results = await query(embedding, 5, undefined, "code")
-  const scores = calculateScores(results.matches || [])
+  const results = await query(embedding, 5, undefined, params.index)
 
+  if (params.index === "code") {
+  const scores = calculateScores(results.matches || [])
 
   const byScore = byKey(scores, "max")
   const byAverage = byKey(scores, "avg")
@@ -46,4 +47,7 @@ export async function searchToolImpl(params: SearchToolInterface) {
   Top average: ${topAveragePath}`
 
   return response
+  } else {
+    return `Semantic search results:\n` + JSON.stringify(results, null, 2)
+  }
 }

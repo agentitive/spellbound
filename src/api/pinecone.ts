@@ -42,12 +42,12 @@ const upsertChunks = async (chunks: Chunk[], namespace = "", metadata = {}) => {
     console.log(`Upserting chunks:`)
     for (let i = 0; i < vectors.length; i += 100) {
         console.log(`  ${i} - ${i + 100} of ${vectors.length}`)
-    const upsertRequest = {
+        const upsertRequest = {
             vectors: vectors.slice(i, i + 100),
-        namespace,
+            namespace,
+        }
+        await index.upsert({ upsertRequest })
     }
-    await index.upsert({ upsertRequest })
-}
 }
 
 export const upsertFile = async (filename: string, block_size: number, block_overlap: number, metadata: any, namespace = "") => {
@@ -84,4 +84,14 @@ export const clearNamespace = async (namespace = "") => {
     const indexName = getPineconeIndex()
     const index = client.Index(indexName!)
     return index.delete1({ deleteAll : true, namespace })
+}
+
+// run DescribeIndexStats
+export const indexStats = async () => {
+    const index = await getIndex()
+    return index.describeIndexStats({
+        describeIndexStatsRequest: {
+            
+        }
+    })
 }
