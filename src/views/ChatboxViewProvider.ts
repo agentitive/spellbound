@@ -4,6 +4,7 @@ import { Message, streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
 import * as Tools from "../tools/Tools"
 import * as ls from "../tools/ls/ls"
+import YAML from "yaml"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
@@ -99,12 +100,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     webviewView: vscode.WebviewView,
     message: Message
   ) {
-    const actionRegex = /## Action\n+```.+\n([^`]+)```/g
+    const actionRegex = /## Action\n+```.*\n([^]+)```/g
     const match = actionRegex.exec(message.content)
 
     if (match) {
       try {
-        const actionObject = JSON.parse(match[1])
+        const actionObject = YAML.parse(match[1], { strict: false })
 
         // Handle the tool action here
         const toolResult = await this.executeToolAction(actionObject)
@@ -124,9 +125,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
           })
         }
       } catch (err) {
-        console.error(match[1])
+        console.error("FULL_MESSAGE", message.content)
+        console.error("REGEX_MATCH", match[1])
         console.error("Error parsing tool action:", err)
       }
+    } else {
+      console.error("No tool action found in message:\n\n", message.content)
     }
   }
 
