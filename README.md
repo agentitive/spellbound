@@ -40,3 +40,25 @@ The following tools are available for use in Spellbound. The underlying AI model
 ## License
 
 Spellbound is released under the MIT License. See the LICENSE file for the full license text.
+
+## Poem
+
+> In a world of magic and wonder,
+> Where codes take form as lightning and thunder,
+> A spellbound whisper echoes in the night,
+> As programmers harness the AI's might.
+
+> Lines of syntax blend and intertwine,
+> Raising structures with power divine,
+> The keystrokes dance, a graceful ballet,
+> As Spellbound weaves its enchanted array.
+
+> Moments of thought guide an intricate plan,
+> As the codebase expands, its reach it will span,
+> The AI and humans work side by side,
+> In the realm of Spellbound, their brilliance will collide.
+
+> From simple beginnings to a grand design,
+> Spellbound empowers, transcending the line,
+> A masterpiece found by the ones who dare,
+> To embrace the magic, this bond that we share.
