@@ -1,7 +1,6 @@
 import * as vscode from "vscode"
 import { ChatboxViewProvider } from "./views/ChatboxViewProvider"
 import { registerCommandExecuteInstruction } from "./commands/registerCommandExecuteInstruction"
-import { fillPrompt } from "./prompts/fillPrompt"
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Your extension "spellbound" is now active!')
@@ -9,12 +8,6 @@ export async function activate(context: vscode.ExtensionContext) {
   await vscode.commands.executeCommand(
     "workbench.action.webview.openDeveloperTools"
   )
-
-  const prompt = await fillPrompt({
-    task: "This is a task",
-  })
-
-  console.log(prompt)
 
   const chatboxViewProvider = new ChatboxViewProvider(context.extensionUri)
 
