@@ -3,6 +3,7 @@
   "displayName": "spellbound",
   "description": "Use OpenAI models to weave the magic of AI into your coding experience, generating enchanting solutions and sparking intuitive insights.",
   "license": "MIT",
+  "publisher": "mpoteat-vsce",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.77.0"
@@ -14,6 +15,10 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/poteat/spellbound.git"
+  },
   "contributes": {
     "configuration": {
       "title": "Spellbound",
@@ -68,11 +73,7 @@
     "compile": "webpack",
     "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "lint": "eslint src --ext ts"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.2",
