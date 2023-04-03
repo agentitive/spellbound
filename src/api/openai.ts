@@ -2,6 +2,7 @@ import * as https from "https"
 import { getOpenAIKey } from "../environment/getOpenAIKey"
 import { getCurrentModel } from "../environment/getCurrentModel"
 import fetch from "node-fetch"
+import { Chunk } from "../utils/chunking"
 
 type Callbacks = {
   onData: (chunk: string) => void
@@ -212,4 +213,34 @@ export const getEmbedding = async (text: string): Promise<number[]> => {
   const data = (await resp.json()) as EmbeddingResponse
   
   return data.data[0].embedding
+}
+
+export const getEmbeddings = async (texts: string[]): Promise<number[][]> => {
+  const resp = await fetch("https://api.openai.com/v1/embeddings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getOpenAIKey()}`,
+    },
+    body: JSON.stringify({
+      input: texts,
+      model: "text-embedding-ada-002",
+    }),
+  })
+  
+  const data = (await resp.json()) as EmbeddingResponse
+
+  return data.data.map((x) => x.embedding)
+}
+
+export const embedChunk = async (chunk: Chunk) => {
+  chunk.embedding = await getEmbedding(chunk.text)
+}
+
+export const embedChunks = async (chunks: Chunk[]) => {
+  const texts = chunks.map((chunk) => chunk.text)
+  const embeddings = await getEmbeddings(texts)
+  chunks.forEach((chunk, i) => {
+    chunk.embedding = embeddings[i]
+  })
 }
