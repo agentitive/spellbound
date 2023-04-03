@@ -1,6 +1,33 @@
 import fs from 'fs'
 import path from 'path'
 
+const IGNORED_EXTENSIONS = [
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.gif',
+    '.mp3',
+    '.mp4',
+    '.mov',
+    '.avi',
+    '.zip',
+    '.gz',
+    '.tar',
+    '.tgz',
+    '.bz2',
+    '.rar',
+    '.7z',
+    '.pdf',
+    '.doc',
+    '.docx',
+    '.xls',
+    '.xlsx',
+    '.ppt',
+    '.pptx',
+    '.odt',
+    '.ods',
+]
+
 export type Chunk = {
     filename: string
     start: number
@@ -58,6 +85,7 @@ export const chunkFolder = (folder: string, block_size: number, block_overlap: n
 
     const files = fullNames
         .filter(f => fs.statSync(f).isFile())
+        .filter(f => !IGNORED_EXTENSIONS.includes(path.extname(f)))
 
     const dirs = fullNames
         .filter(f => fs.statSync(f).isDirectory())
