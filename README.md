@@ -90,3 +90,15 @@ Spellbound is released under the MIT License. See the LICENSE file for the full 
 > Spellbound empowers, transcending the line,
 > A masterpiece found by the ones who dare,
 > To embrace the magic, this bond that we share.
+
+```sh
+
+╭━━━╮╱╱╱╱╱╱╱╱╭╮╱╭╮╱╭╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
+┃╭━╮┃╱╱╱╱╱╱╱╱┃┃╱┃┃╱┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱┃┃
+┃╰━━╮╭━━╮╭━━╮┃┃╱┃┃╱┃╰━╮╭━━╮╭╮╭╮╭━╮╱╭━╯┃
+╰━━╮┃┃╭╮┃┃┃━┫┃┃╱┃┃╱┃╭╮┃┃╭╮┃┃┃┃┃┃╭╮╮┃╭╮┃
+┃╰━╯┃┃╰╯┃┃┃━┫┃╰╮┃╰╮┃╰╯┃┃╰╯┃┃╰╯┃┃┃┃┃┃╰╯┃
+╰━━━╯┃╭━╯╰━━╯╰━╯╰━╯╰━━╯╰━━╯╰━━╯╰╯╰╯╰━━╯
+╱╱╱╱╱┃┃
+╱╱╱╱╱╰╯
+```
