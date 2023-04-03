@@ -24,6 +24,20 @@ To use Spellbound, simply interact with your codebase as usual. Whenever you nee
 
 Spellbound uses a "thought/action" control loop to create an autonomous coding agent, as described in the **[ReAct paper](https://arxiv.org/abs/2210.03629)**. The agent is able to take actions based on its current thoughts, and its future thoughts are influenced by the results of its actions.
 
+## Extension Settings
+
+| Parameter                   | Description                                          | Default | Scope   |
+| --------------------------- | ---------------------------------------------------- | ------- | ------- |
+| spellbound.openai_api_key   | Enter your OpenAI API key here, used for inference.  |         | machine |
+| spellbound.pinecone_api_key | Enter your Pinecone API key here, used for search.   |         | machine |
+| spellbound.model            | Select the AI model used by the Spellbound extension | gpt-4   |         |
+
+### Configuring Settings
+
+To configure the extension settings, open the Settings editor in Visual Studio Code by clicking on the gear icon in the lower left corner and selecting "Settings" from the menu. In the search bar, type "Spellbound" to filter the settings related to the extension. You can then enter your API keys and select the preferred model from the available options.
+
+Environment variables `OPENAI_API_KEY` and `PINECONE_API_KEY` will be used in place of the settings if they are set.
+
 ## Tools
 
 The following tools are available for use in Spellbound. The underlying AI model uses tools to solve open-ended tasks.
