@@ -164,7 +164,7 @@ export async function npmScript(script: string): Promise<string> {
   }
 
   // Use the helper function to run the npm script
-  return await runNpmCommand(`run ${script}`, workspacePath)
+  return await runNpmCommand(script, workspacePath)
 }
 
 async function runNpmCommand(script: string, cwd: string): Promise<string> {
