@@ -11,7 +11,6 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   private md = markdownit({
     html: true,
     breaks: true,
-    linkify: true,
   })
 
   resolveWebviewView(webviewView: vscode.WebviewView) {

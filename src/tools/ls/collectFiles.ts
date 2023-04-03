@@ -2,7 +2,6 @@ import { promises as fs } from "fs"
 import path from "path"
 
 export async function collectFiles(
-  workspacePath: string,
   directory: string,
   filterFunction: (file: string) => boolean,
   recursive: boolean,
@@ -19,13 +18,7 @@ export async function collectFiles(
       const entryPath = path.join(directory, entry.name)
 
       if (entry.isDirectory() && recursive) {
-        await collectFiles(
-          workspacePath,
-          entryPath,
-          filterFunction,
-          recursive,
-          collected
-        )
+        await collectFiles(entryPath, filterFunction, recursive, collected)
       } else if (entry.isFile()) {
         if (filterFunction(entryPath)) {
           collected.push(entryPath)

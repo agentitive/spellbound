@@ -1,4 +1,4 @@
-import path from "path"
+import path, { relative } from "path"
 import ignore from "ignore"
 import { collectFiles } from "./collectFiles"
 import { readGitignore } from "./readGitignore"
@@ -17,19 +17,24 @@ export async function ls(
 
   ig.add(gitignorePatterns)
 
-  const filterFunction = (file: string) =>
-    !ig.ignores(path.relative(basePath, file)) && !file.startsWith(".git/")
+  const filterFunction = (file: string) => {
+    const relativePath = path.relative(basePath, file)
+    return (
+      !ig.ignores(path.relative(basePath, file)) &&
+      !relativePath.startsWith(".git/")
+    )
+  }
 
-  const files = await collectFiles(
-    basePath,
-    directory,
-    filterFunction,
-    recursive
-  )
+  const absoluteDirectory = path.join(basePath, directory)
+
+  const files = await collectFiles(absoluteDirectory, filterFunction, recursive)
 
   if (typeof files === "string") {
     return files
   }
 
-  return files.map((x) => `- ${x}`).join("\n")
+  return files
+    .map((x) => relative(basePath, x))
+    .map((x) => `- ${x}`)
+    .join("\n")
 }
