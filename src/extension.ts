@@ -1,5 +1,6 @@
 import * as vscode from "vscode"
 import { ChatboxViewProvider } from "./views/ChatboxViewProvider"
+import { indexWorkspace } from "./commands/indexWorkspace"
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Your extension "spellbound" is now active!')
@@ -16,7 +17,12 @@ export async function activate(context: vscode.ExtensionContext) {
       chatboxViewProvider
     )
   )
+
+  // register command
+  context.subscriptions.push(
+    vscode.commands.registerCommand("spellbound.indexWorkspace", indexWorkspace)
+  )
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
