@@ -1,3 +1,4 @@
+import { exec } from "child_process"
 import { promises as fs } from "fs"
 import path from "path"
 import * as vscode from "vscode"
@@ -51,6 +52,13 @@ export type ToolObject =
        */
       tool: "ask"
       question: string
+    }
+  | {
+      /**
+       * The `npm` tool runs the given npm script.
+       */
+      tool: "npm"
+      script: string
     }
   | {
       /**
@@ -145,6 +153,39 @@ export async function replace(
 
 export async function ask(_question: string) {
   return undefined
+}
+
+export async function npmScript(script: string): Promise<string> {
+  // Base off of workspace directory
+  const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
+
+  if (!workspacePath) {
+    throw new Error("No workspace folder found.")
+  }
+
+  // Use the helper function to run the npm script
+  return await runNpmCommand(`run ${script}`, workspacePath)
+}
+
+async function runNpmCommand(script: string, cwd: string): Promise<string> {
+  // Validate that 'script' doesn't contain ; or &
+  if (script.includes(";") || script.includes("&")) {
+    return `ERROR: Invalid npm script: ${script}`
+  }
+
+  return new Promise((resolve, reject) => {
+    // Execute the npm command in the provided working directory
+    exec(`npm run ${script}`, { cwd }, (error, stdout, stderr) => {
+      if (error) {
+        const errorMessage = `ERROR: Failed to run npm command: ${script}\n${stderr}`
+        console.error(errorMessage)
+        resolve(errorMessage)
+      } else {
+        const successMessage = `Successfully ran npm command: ${script}\n${stdout}`
+        resolve(successMessage)
+      }
+    })
+  })
 }
 
 export async function done() {

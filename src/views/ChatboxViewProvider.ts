@@ -160,6 +160,8 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         )
       case "ask":
         return await Tools.ask(actionObject.question)
+      case "npm":
+        return await Tools.npmScript(actionObject.script)
       case "done":
         return await Tools.done()
       default:
