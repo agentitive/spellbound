@@ -1,5 +1,5 @@
 <a href="https://github.com/poteat/spellbound#readme">
-  <img src=https://raw.githubusercontent.com/poteat/spellbound/main/assets/logo.jpeg>
+  <img src=https://raw.githubusercontent.com/poteat/spellbound/main/assets/logo.png>
 </a>
 
 <br>
