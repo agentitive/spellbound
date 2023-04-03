@@ -37,6 +37,12 @@
           "description": "Enter your Pinecone API key here, used for search.",
           "scope": "machine"
         },
+        "spellbound.pinecone_index": {
+          "type": "string",
+          "default": "",
+          "description": "Enter your Pinecone index name here, used for search.",
+          "scope": "application"
+        },
         "spellbound.model": {
           "type": "string",
           "default": "gpt-4",
