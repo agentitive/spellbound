@@ -1,6 +1,7 @@
 import * as https from "https"
 import { getOpenAIKey } from "../environment/getOpenAIKey"
 import { getCurrentModel } from "../environment/getCurrentModel"
+import fetch from "node-fetch"
 
 type Callbacks = {
   onData: (chunk: string) => void
@@ -177,4 +178,38 @@ export async function streamInference(
     _resolve = resolve
     _reject = reject
   })
+}
+
+export type Embedding = {
+  embedding: number[]
+  index: number
+  object: "embedding"
+}
+
+export type EmbeddingResponse = {
+  data: Embedding[]
+  model: string
+  object: "list"
+  usage: {
+    prompt_tokens: number
+    total_tokens: number
+  }
+}
+
+export const getEmbedding = async (text: string): Promise<number[]> => {
+  const resp = await fetch("https://api.openai.com/v1/embeddings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getOpenAIKey()}`,
+    },
+    body: JSON.stringify({
+      input: text,
+      model: "text-embedding-ada-002",
+    }),
+  })
+
+  const data = (await resp.json()) as EmbeddingResponse
+  
+  return data.data[0].embedding
 }
