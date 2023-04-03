@@ -1,5 +1,6 @@
 import * as vscode from "vscode"
 import { Message, streamInference } from "../api/openai"
+import { fillPrompt } from "../prompts/fillPrompt"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
@@ -22,6 +23,19 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   }
 
   async handleSendPrompt(webviewView: vscode.WebviewView, messages: Message[]) {
+    const filledPrompt = await fillPrompt({
+      task: messages[0].content,
+    })
+
+    // Replace contents of first message with template prompt.
+    const updatedMessages = [
+      {
+        role: messages[0].role,
+        content: filledPrompt,
+      },
+      ...messages.slice(1),
+    ]
+
     const onStart = () => {
       webviewView.webview.postMessage({
         command: "sendMessage",
@@ -55,7 +69,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     onStart()
 
     // Call the streamInference function
-    await streamInference(messages, {
+    await streamInference(updatedMessages, {
       onData,
       onEnd,
     })
