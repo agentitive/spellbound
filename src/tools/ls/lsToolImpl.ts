@@ -1,15 +1,21 @@
 import path, { relative } from "path"
 import ignore from "ignore"
-import { collectFiles } from "./collectFiles"
-import { readGitignore } from "./readGitignore"
+import { collectFiles } from "./utility/collectFiles"
+import { readGitIgnore } from "./utility/readGitIgnore"
+import * as vscode from "vscode"
 
-export async function ls(
-  basePath: string,
+export async function lsToolImpl(
   directory: string,
   recursive = false
 ): Promise<string> {
+  const basePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
+
+  if (!basePath) {
+    return `ERROR: No workspace folder opened.`
+  }
+
   const ig = ignore()
-  const gitignorePatterns = await readGitignore(basePath)
+  const gitignorePatterns = await readGitIgnore(basePath)
 
   if (typeof gitignorePatterns === "string") {
     return gitignorePatterns

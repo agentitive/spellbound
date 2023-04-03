@@ -1,7 +1,7 @@
 import { promises as fs } from "fs"
 import path from "path"
 
-export async function readGitignore(
+export async function readGitIgnore(
   workspacePath: string
 ): Promise<string[] | string> {
   const gitignorePath = path.join(workspacePath, ".gitignore")

@@ -2,9 +2,17 @@ import * as vscode from "vscode"
 import markdownit from "markdown-it"
 import { Message, streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
-import * as Tools from "../tools/Tools"
-import * as ls from "../tools/ls/ls"
+
 import YAML from "yaml"
+import { AnyToolInterface } from "../tools/AnyToolInterface"
+import { askToolImpl } from "../tools/ask/askToolImpl"
+import { doneToolImpl } from "../tools/done/doneToolImpl"
+import { npmToolImpl } from "../tools/npm/npmToolImpl"
+import { replaceToolImpl } from "../tools/replace/replaceToolImpl"
+import { writeToolImpl } from "../tools/write/writeToolImpl"
+import { catToolImpl } from "../tools/cat/catToolImpl"
+import { lsToolImpl } from "../tools/ls/lsToolImpl"
+import { searchToolImpl } from "../tools/search/searchToolImpl"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
@@ -145,7 +153,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async executeToolAction(
-    actionObject: Tools.ToolObject
+    actionObject: AnyToolInterface
   ): Promise<string | undefined> {
     if (!actionObject.tool) {
       return
@@ -153,31 +161,25 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
     switch (actionObject.tool) {
       case "cat":
-        return await Tools.cat(actionObject.path)
+        return await catToolImpl(actionObject.path)
       case "ls":
-        const basePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
-
-        if (!basePath) {
-          return `ERROR: No workspace folder opened.`
-        }
-
-        return await ls.ls(basePath, actionObject.path, actionObject.recursive)
+        return await lsToolImpl(actionObject.path, actionObject.recursive)
       case "search":
-        return await Tools.search(actionObject.description)
+        return await searchToolImpl(actionObject.description)
       case "write":
-        return await Tools.write(actionObject.path, actionObject.contents)
+        return await writeToolImpl(actionObject.path, actionObject.contents)
       case "replace":
-        return await Tools.replace(
+        return await replaceToolImpl(
           actionObject.path,
           actionObject.old,
           actionObject.new
         )
       case "ask":
-        return await Tools.ask(actionObject.question)
+        return await askToolImpl(actionObject.question)
       case "npm":
-        return await Tools.npmScript(actionObject.script)
+        return await npmToolImpl(actionObject.script)
       case "done":
-        return await Tools.done()
+        return await doneToolImpl()
       default:
         return `ERROR: Unknown tool: ${(actionObject as any)?.tool}`
     }
