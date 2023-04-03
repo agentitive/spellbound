@@ -197,6 +197,20 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
           #input-area button:hover {
             background-color: #488848;
           }
+
+          .user-message {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+          }
+        
+          .response-message {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+          }
         </style>
       </head>
       <body>
