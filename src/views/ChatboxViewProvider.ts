@@ -129,7 +129,15 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         console.error("REGEX_MATCH", match[1])
         console.error("Error parsing tool action:", err)
 
-        return `ERROR: Could not parse tool action: ${err?.message}`
+        const errorMessage = `ERROR: Could not parse tool action: ${err?.message}`
+
+        webviewView.webview.postMessage({
+          command: "sendMessage",
+          message: {
+            content: errorMessage,
+            type: "tool-result",
+          },
+        })
       }
     } else {
       console.error("No tool action found in message:\n\n", message.content)
