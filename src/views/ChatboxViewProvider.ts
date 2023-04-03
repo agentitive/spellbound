@@ -82,6 +82,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       message: {
         content: messages[messages.length - 1].content,
         type: "input",
+        rendered: this.md.render(messages[messages.length - 1].content),
       },
     })
 
@@ -98,7 +99,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     webviewView: vscode.WebviewView,
     message: Message
   ) {
-    const actionRegex = /## Action\n+```([^`]+)```/g
+    const actionRegex = /## Action\n+```.+\n([^`]+)```/g
     const match = actionRegex.exec(message.content)
 
     if (match) {
@@ -123,31 +124,34 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
           })
         }
       } catch (err) {
+        console.error(match[1])
         console.error("Error parsing tool action:", err)
       }
     }
   }
 
   private async executeToolAction(
-    actionObject: any
+    actionObject: Tools.ToolObject
   ): Promise<string | undefined> {
-    const toolData: Tools.ToolObject = actionObject.toolData
+    if (!actionObject.tool) {
+      return
+    }
 
-    switch (toolData.tool) {
+    switch (actionObject.tool) {
       case "cat":
-        return await Tools.cat(toolData.path)
+        return await Tools.cat(actionObject.path)
       case "ls":
-        return await Tools.ls(toolData.path, toolData.recursive)
+        return await Tools.ls(actionObject.path, actionObject.recursive)
       case "search":
-        return await Tools.search(toolData.description)
+        return await Tools.search(actionObject.description)
       case "write":
-        return await Tools.write(toolData.path, toolData.contents)
+        return await Tools.write(actionObject.path, actionObject.contents)
       case "ask":
-        return await Tools.ask(toolData.question)
+        return await Tools.ask(actionObject.question)
       case "done":
         return await Tools.done()
       default:
-        return `ERROR: Unknown tool: ${(toolData as any)?.tool}`
+        return `ERROR: Unknown tool: ${(actionObject as any)?.tool}`
     }
   }
 
@@ -187,9 +191,13 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         messageElement.textContent = message.content;
         messageHistoryContainer.appendChild(messageElement);
 
-        if (message.type === 'start' || message.type === 'input' || message.type === 'tool-result') {
+        if (message.type === 'input') {
+          messageElement.innerHTML = message.rendered;
+        }
+
+        if (message.type === 'start' || message.type === 'input') {
           messages.push({
-            role: message.type === 'input' || message.type === "tool-result" ? 'system' : 'assistant',
+            role: message.type === 'input' ? 'system' : 'assistant',
             content: message.content ?? "",
           })
         }
@@ -218,12 +226,10 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
                 addMessage(message.message);
                 break;
               case 'tool-result':
-                addMessage(message.message);
-
                 // Treat the tool result as a prompt (implement 'thought-loop')
                 vscode.postMessage({
                   command: "sendPrompt",
-                  messages
+                  messages: [...messages, { role: "system", content: message.message.content }]
                 })
                 break;
             }
