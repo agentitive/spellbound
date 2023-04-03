@@ -23,6 +23,11 @@ export async function fillPrompt(params: FillPromptParams): Promise<string> {
     params.current_file_contents = activeTextEditor.document.getText()
   }
 
+  params.language = params.language || "undefined"
+  params.current_file_name = params.current_file_name || "undefined"
+  params.langcode = params.langcode || "undefined"
+  params.current_file_contents = params.current_file_contents || "undefined"
+
   // Get the workspace folder path
   const wsFolders = vscode.workspace.workspaceFolders
   if (wsFolders && wsFolders.length > 0) {
