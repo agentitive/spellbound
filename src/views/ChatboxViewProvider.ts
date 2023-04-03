@@ -153,6 +153,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         return await Tools.search(actionObject.description)
       case "write":
         return await Tools.write(actionObject.path, actionObject.contents)
+      case "replace":
+        return await Tools.replace(
+          actionObject.path,
+          actionObject.old,
+          actionObject.new
+        )
       case "ask":
         return await Tools.ask(actionObject.question)
       case "done":
