@@ -1,4 +1,15 @@
-# Spellbound
+<a href="https://github.com/poteat/spellbound#readme">
+  <img src=https://raw.githubusercontent.com/poteat/spellbound/main/assets/logo.jpeg>
+</a>
+
+<br>
+<br>
+
+<p align="center">
+  <i>Functional and composable type utilities</i>
+</p>
+
+---
 
 Spellbound is a Visual Studio Code extension that leverages the power of the OpenAI API to create an intelligent coding assistant. With Spellbound, you can harness the capabilities of cutting-edge AI to improve your coding experience and productivity.
 
