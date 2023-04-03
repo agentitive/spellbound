@@ -1,7 +1,6 @@
 import { promises as fs } from "fs"
 import path from "path"
 import * as vscode from "vscode"
-import ignore from "ignore"
 
 export type ToolObject =
   | {
@@ -90,78 +89,4 @@ export async function ask(_question: string) {
 
 export async function done() {
   return undefined
-}
-
-async function readGitignore(
-  workspacePath: string
-): Promise<string[] | string> {
-  const gitignorePath = path.join(workspacePath, ".gitignore")
-
-  try {
-    const gitignoreContent = await fs.readFile(gitignorePath, "utf8")
-    return gitignoreContent.split(/\r?\n/)
-  } catch (err) {
-    return `ERROR: Failed to read .gitignore file: ${err}`
-  }
-}
-
-async function collectFiles(
-  directory: string,
-  filterFunction: (file: string) => boolean,
-  recursive: boolean,
-  collected?: string[] // for internal recursive use
-): Promise<string[] | string> {
-  if (!collected) {
-    collected = []
-  }
-
-  try {
-    const entries = await fs.readdir(directory, { withFileTypes: true })
-
-    for (const entry of entries) {
-      const entryPath = path.join(directory, entry.name)
-
-      if (entry.isDirectory() && recursive) {
-        await collectFiles(entryPath, filterFunction, recursive, collected)
-      } else if (entry.isFile()) {
-        if (filterFunction(entryPath)) {
-          collected.push(entryPath)
-        }
-      }
-    }
-  } catch (err) {
-    return `ERROR: Failed to read directory contents: ${err}`
-  }
-
-  return collected
-}
-
-export async function ls(
-  directory: string,
-  recursive = false
-): Promise<string> {
-  const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
-  if (!workspacePath) {
-    throw new Error("No workspace folder found.")
-  }
-
-  const ig = ignore()
-  const gitignorePatterns = await readGitignore(workspacePath)
-
-  if (typeof gitignorePatterns === "string") {
-    return gitignorePatterns
-  }
-
-  ig.add(gitignorePatterns)
-
-  const filterFunction = (file: string) =>
-    !ig.ignores(path.relative(workspacePath, file))
-
-  const files = await collectFiles(directory, filterFunction, recursive)
-
-  if (typeof files === "string") {
-    return files
-  }
-
-  return files.map((x) => `- ${x}`).join("\n")
 }

@@ -3,6 +3,7 @@ import markdownit from "markdown-it"
 import { Message, streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
 import * as Tools from "../tools/Tools"
+import * as ls from "../tools/ls/ls"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
@@ -141,7 +142,13 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       case "cat":
         return await Tools.cat(actionObject.path)
       case "ls":
-        return await Tools.ls(actionObject.path, actionObject.recursive)
+        const basePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
+
+        if (!basePath) {
+          return `ERROR: No workspace folder opened.`
+        }
+
+        return await ls.ls(basePath, actionObject.path, actionObject.recursive)
       case "search":
         return await Tools.search(actionObject.description)
       case "write":

@@ -143,7 +143,6 @@ export async function streamInference(
 
       if (completion) {
         buffer += completion
-        console.log(buffer)
 
         callbacks.onData(completion)
       }
