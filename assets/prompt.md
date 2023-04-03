@@ -19,7 +19,7 @@ Use the following tools:
 | Tool                     | Description                                                                            |
 | ------------------------ | -------------------------------------------------------------------------------------- |
 | cat {path}               | Read the content of a file at the given path.                                          |
-| ls {path, recursive?}    | List files and folders at the given path.                                              |
+| ls {path, recursive?}    | List files and folders at the given path relative to workspace root.                   |
 | search {description}     | Search for a file or relevant information by description, via vector embedding search. |
 | write {path, contents}   | Write (or overwrite) the given contents into the specified file.                       |
 | replace {path, old, new} | Replace all occurrences of `old` with `new` in the specified file.                     |

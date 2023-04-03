@@ -124,10 +124,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
             },
           })
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("FULL_MESSAGE", message.content)
         console.error("REGEX_MATCH", match[1])
         console.error("Error parsing tool action:", err)
+
+        return `ERROR: Could not parse tool action: ${err?.message}`
       }
     } else {
       console.error("No tool action found in message:\n\n", message.content)
