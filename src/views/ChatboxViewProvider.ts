@@ -1,9 +1,16 @@
 import * as vscode from "vscode"
+import markdownit from "markdown-it"
 import { Message, streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
+
+  private md = markdownit({
+    html: true,
+    breaks: true,
+    linkify: true,
+  })
 
   resolveWebviewView(webviewView: vscode.WebviewView) {
     webviewView.webview.options = {
@@ -43,10 +50,14 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       })
     }
 
+    let buffer = ""
+
     const onData = (output: string) => {
+      buffer += output
+      const rendered = this.md.render(buffer)
       webviewView.webview.postMessage({
         command: "sendMessage",
-        message: { content: output, type: "chunk" },
+        message: { content: output, rendered, type: "chunk" },
       })
     }
 
@@ -90,7 +101,6 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         const prompt = inputField.value.trim()
         if (prompt) {
           // Pass the prompt to the extension
-          console.log("SENDING MESSAGE", prompt)
           vscode.postMessage({
             command: "sendPrompt",
             messages: [...messages, { role: "system", content: prompt }],
@@ -131,7 +141,9 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
                 break;
               case 'chunk':
                 const lastResponse = document.querySelector('.response-message:last-child');
-                lastResponse.textContent += message.message.content;
+
+                lastResponse.innerHTML = message.message.rendered;
+
                 messages[messages.length - 1].content += message.message.content;
                 break;
               case 'done':
