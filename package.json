@@ -5,6 +5,7 @@
   "license": "MIT",
   "publisher": "mpoteat-vsce",
   "icon": "./assets/icon.png",
+  "galleryBanner.color": "#0e1116",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.77.0"
