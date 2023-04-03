@@ -3,7 +3,7 @@
   "displayName": "spellbound",
   "description": "Use OpenAI models to weave the magic of AI into your coding experience, generating enchanting solutions and sparking intuitive insights.",
   "license": "MIT",
-  "publisher": "mpoteat-vsce",
+  "publisher": "magentitive-vsce",
   "icon": "./assets/icon.png",
   "galleryBanner.color": "#0e1116",
   "version": "0.0.2",
@@ -19,7 +19,7 @@
   "main": "./dist/extension.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/poteat/spellbound.git"
+    "url": "git+ssh://git@github.com/agentitive/spellbound.git"
   },
   "contributes": {
     "configuration": {

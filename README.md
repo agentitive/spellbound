@@ -1,5 +1,5 @@
-<a href="https://github.com/poteat/spellbound#readme">
-  <img src=https://raw.githubusercontent.com/poteat/spellbound/main/assets/logo.png>
+<a href="https://github.com/agentitive/spellbound#readme">
+  <img src=https://raw.githubusercontent.com/agentitive/spellbound/main/assets/logo.png>
 </a>
 
 <br>
@@ -11,7 +11,7 @@
 
 ---
 
-**Spellbound** is a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=mpoteat-vsce.spellbound) that leverages the power of the OpenAI API to create an intelligent coding assistant. With _Spellbound_, you can harness the capabilities of cutting-edge AI to improve your coding experience and productivity.
+**Spellbound** is a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=magentitive-vsce.spellbound) that leverages the power of the OpenAI API to create an intelligent coding assistant. With _Spellbound_, you can harness the capabilities of cutting-edge AI to improve your coding experience and productivity.
 
 ## Installation
 

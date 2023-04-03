@@ -12,7 +12,7 @@ This document provides instructions for setting up the local development environ
 1. Clone the repository using `git`:
 
    ```
-   git clone https://github.com/poteat/spellbound.git
+   git clone https://github.com/agentitive/spellbound.git
    ```
 
 2. Change into the cloned directory:
