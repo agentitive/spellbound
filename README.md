@@ -6,7 +6,7 @@
 <br>
 
 <p align="center">
-  <i>Autonomous and goal-seeking code agents</i>
+  <i>Autonomous and goal-seeking coding agents</i>
 </p>
 
 ---
