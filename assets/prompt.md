@@ -20,7 +20,7 @@ Use the following tools:
 2. `ls { path, recursive? }`: List files and folders at the given path.
 3. `search { description }`: Search for a file or relevant information by description.
 4. `write { path, contents }`: Write (or overwrite) the given contents into the specified file.
-5. `replace { path, old, new }`: Replace all occurrences of `old` with `new` in the specified file.
+5. `replace { path, old, new }`: Replace all occurrences of `old` with `new` in the specified file. Useful for quick in-place edits.
 6. `ask { question }`: Ask a question to the user.
 7. `npm { script }`: Run an npm script e.g. `npm run [script]`.
 8. `done { output? }`: Indicate that you are done with the task.
