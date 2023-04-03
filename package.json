@@ -4,6 +4,7 @@
   "description": "Use OpenAI models to weave the magic of AI into your coding experience, generating enchanting solutions and sparking intuitive insights.",
   "license": "MIT",
   "publisher": "mpoteat-vsce",
+  "icon": "./assets/icon.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.77.0"
