@@ -43,6 +43,12 @@
           "description": "Enter your Pinecone index name here, used for search.",
           "scope": "application"
         },
+        "spellbound.pinecone_environment": {
+          "type": "string",
+          "default": "",
+          "description": "Enter your Pinecone environment here, used for search.",
+          "scope": "application"
+        },
         "spellbound.model": {
           "type": "string",
           "default": "gpt-4",
@@ -72,7 +78,11 @@
     "commands": [
       {
         "command": "spellbound.executeInstruction",
-        "title": "Execute Instruction with Spellbound"
+        "title": "Spellbound: Execute Instruction"
+      },
+      {
+        "command": "spellbound.indexWorkspace",
+        "title": "Spellbound: Index the current workspace"
       }
     ]
   },
