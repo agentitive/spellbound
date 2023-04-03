@@ -2,6 +2,7 @@ import * as vscode from "vscode"
 import markdownit from "markdown-it"
 import { Message, streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
+import * as Tools from "../tools/Tools"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
@@ -66,6 +67,13 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         command: "sendMessage",
         message: { content: "", type: "done" },
       })
+
+      // At this point, we may determine if the LLM used a tool or not. If so,
+      // we should execute that tool and send the result as a message.
+      this.handleToolMessage(webviewView, {
+        role: "assistant",
+        content: buffer,
+      })
     }
 
     // Update the chat UI with the user's prompt
@@ -84,6 +92,63 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       onData,
       onEnd,
     })
+  }
+
+  private async handleToolMessage(
+    webviewView: vscode.WebviewView,
+    message: Message
+  ) {
+    const actionRegex = /## Action\n+```([^`]+)```/g
+    const match = actionRegex.exec(message.content)
+
+    if (match) {
+      try {
+        const actionObject = JSON.parse(match[1])
+
+        // Handle the tool action here
+        const toolResult = await this.executeToolAction(actionObject)
+
+        // Some tools purposefully don't return a result
+        if (toolResult) {
+          // Wrap the tool result in nice output.
+          const toolResultOutput = `## Result\n\`\`\`\n${toolResult}\n\`\`\``
+
+          // Send the tool result as a message
+          webviewView.webview.postMessage({
+            command: "sendMessage",
+            message: {
+              content: toolResultOutput,
+              type: "tool-result",
+            },
+          })
+        }
+      } catch (err) {
+        console.error("Error parsing tool action:", err)
+      }
+    }
+  }
+
+  private async executeToolAction(
+    actionObject: any
+  ): Promise<string | undefined> {
+    const toolData: Tools.ToolObject = actionObject.toolData
+
+    switch (toolData.tool) {
+      case "cat":
+        return await Tools.cat(toolData.path)
+      case "ls":
+        return await Tools.ls(toolData.path, toolData.recursive)
+      case "search":
+        return await Tools.search(toolData.description)
+      case "write":
+        return await Tools.write(toolData.path, toolData.contents)
+      case "ask":
+        return await Tools.ask(toolData.question)
+      case "done":
+        return await Tools.done()
+      default:
+        return `ERROR: Unknown tool: ${(toolData as any)?.tool}`
+    }
   }
 
   private getChatboxHtml() {
@@ -122,9 +187,9 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         messageElement.textContent = message.content;
         messageHistoryContainer.appendChild(messageElement);
 
-        if (message.type === 'start' || message.type === 'input') {
+        if (message.type === 'start' || message.type === 'input' || message.type === 'tool-result') {
           messages.push({
-            role: message.type === 'input' ? 'system' : 'assistant',
+            role: message.type === 'input' || message.type === "tool-result" ? 'system' : 'assistant',
             content: message.content ?? "",
           })
         }
@@ -151,6 +216,15 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
                 break;
               case 'input':
                 addMessage(message.message);
+                break;
+              case 'tool-result':
+                addMessage(message.message);
+
+                // Treat the tool result as a prompt (implement 'thought-loop')
+                vscode.postMessage({
+                  command: "sendPrompt",
+                  messages
+                })
                 break;
             }
             break;
