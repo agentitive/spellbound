@@ -15,10 +15,20 @@ type FillPromptParams = {
 export async function fillPrompt(params: FillPromptParams): Promise<string> {
   const activeTextEditor = vscode.window.activeTextEditor
 
+  // Get the workspace folder path
+  const basePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
+
   // Getting language, current_file_name, langcode, and current_file_contents from the active text editor
   if (activeTextEditor) {
     params.language = activeTextEditor.document.languageId
-    params.current_file_name = path.basename(activeTextEditor.document.fileName)
+
+    if (basePath) {
+      params.current_file_name = path.relative(
+        basePath,
+        activeTextEditor.document.fileName
+      )
+    }
+
     params.langcode = activeTextEditor.document.languageId // Assuming langcode is same as languageId
     params.current_file_contents = activeTextEditor.document.getText()
   }
@@ -28,8 +38,8 @@ export async function fillPrompt(params: FillPromptParams): Promise<string> {
   params.langcode = params.langcode || "undefined"
   params.current_file_contents = params.current_file_contents || "undefined"
 
-  // Get the workspace folder path
   const wsFolders = vscode.workspace.workspaceFolders
+
   if (wsFolders && wsFolders.length > 0) {
     // Assume that the first workspace folder is the root of the codebase
     const workspaceFolderPath = wsFolders[0].uri.fsPath
