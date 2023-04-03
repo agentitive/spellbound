@@ -37,6 +37,7 @@ export async function fillPrompt(params: FillPromptParams): Promise<string> {
   params.current_file_name = params.current_file_name || "undefined"
   params.langcode = params.langcode || "undefined"
   params.current_file_contents = params.current_file_contents || "undefined"
+  params.codebase_description = "Unknown codebase."
 
   const wsFolders = vscode.workspace.workspaceFolders
 
@@ -60,8 +61,6 @@ export async function fillPrompt(params: FillPromptParams): Promise<string> {
       vscode.window.showWarningMessage(
         "Could not find a .spellbound/description.md file in the workspace folder. Presence of this file improves AI performance."
       )
-
-      params.codebase_description = undefined
     }
   }
 
