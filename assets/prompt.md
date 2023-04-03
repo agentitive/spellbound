@@ -22,4 +22,4 @@ Use the following tools:
 4. `write { path, contents }`: Write (or overwrite) the given contents into the specified file.
 5. `done`: Indicate that you are done with the task.
 
-Respond with your thoughts as "## Thought" and your actions as "## Action". The next message you receive will contain the results of the previous action. Every message you send must contain both "Thought" and "Action" sections.
+Respond with your thoughts as "## Thought" and your actions as "## Action". The next message you receive will contain the results of the previous action. Every message you send must contain both "Thought" and "Action" sections, with the "Action" section containing the JSON structure for the tool usage inside a markdown code block.
