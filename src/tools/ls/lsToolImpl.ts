@@ -3,11 +3,11 @@ import ignore from "ignore"
 import { collectFiles } from "./utility/collectFiles"
 import { readGitIgnore } from "./utility/readGitIgnore"
 import * as vscode from "vscode"
+import { LsToolInterface } from "./LsToolInterface"
 
-export async function lsToolImpl(
-  directory: string,
-  recursive = false
-): Promise<string> {
+export async function lsToolImpl(params: LsToolInterface): Promise<string> {
+  const { path: directory, recursive } = params
+
   const basePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
 
   if (!basePath) {
@@ -33,7 +33,11 @@ export async function lsToolImpl(
 
   const absoluteDirectory = path.join(basePath, directory)
 
-  const files = await collectFiles(absoluteDirectory, filterFunction, recursive)
+  const files = await collectFiles(
+    absoluteDirectory,
+    filterFunction,
+    recursive ?? false
+  )
 
   if (typeof files === "string") {
     return files

@@ -1,12 +1,15 @@
 import { promises as fs } from "fs"
 import path from "path"
 import * as vscode from "vscode"
+import { ReplaceToolInterface } from "./ReplaceToolInterface"
 
 export async function replaceToolImpl(
-  filePath: string,
-  old: string,
-  new_: string
+  params: ReplaceToolInterface
 ): Promise<string> {
+  const filePath = params.path
+  const old = params.old
+  const new_ = params.new
+
   // Base off of workspace directory
   const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
 

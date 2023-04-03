@@ -1,7 +1,10 @@
 import * as vscode from "vscode"
 import { runNpmCommand } from "./utility/runNpmCommand"
+import { NpmToolInterface } from "./NpmToolInterface"
 
-export async function npmToolImpl(script: string): Promise<string> {
+export async function npmToolImpl(params: NpmToolInterface): Promise<string> {
+  const { script } = params
+
   // Base off of workspace directory
   const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
 

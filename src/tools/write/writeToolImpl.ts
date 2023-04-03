@@ -1,11 +1,14 @@
 import { promises as fs } from "fs"
 import path from "path"
 import * as vscode from "vscode"
+import { WriteToolInterface } from "./WriteToolInterface"
 
 export async function writeToolImpl(
-  filePath: string,
-  contents: string
+  params: WriteToolInterface
 ): Promise<string> {
+  const filePath = params.path
+  const contents = params.contents
+
   // Base off of workspace directory
   const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
 

@@ -1,3 +1,5 @@
-export async function askToolImpl(_question: string) {
+import { AskToolInterface } from "./AskToolInterface"
+
+export async function askToolImpl(params: AskToolInterface) {
   return undefined
 }

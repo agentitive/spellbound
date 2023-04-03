@@ -5,14 +5,7 @@ import { fillPrompt } from "../prompts/fillPrompt"
 
 import YAML from "yaml"
 import { AnyToolInterface } from "../tools/AnyToolInterface"
-import { askToolImpl } from "../tools/ask/askToolImpl"
-import { doneToolImpl } from "../tools/done/doneToolImpl"
-import { npmToolImpl } from "../tools/npm/npmToolImpl"
-import { replaceToolImpl } from "../tools/replace/replaceToolImpl"
-import { writeToolImpl } from "../tools/write/writeToolImpl"
-import { catToolImpl } from "../tools/cat/catToolImpl"
-import { lsToolImpl } from "../tools/ls/lsToolImpl"
-import { searchToolImpl } from "../tools/search/searchToolImpl"
+import { ToolEngine } from "../tools/ToolEngine"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
@@ -159,29 +152,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       return
     }
 
-    switch (actionObject.tool) {
-      case "cat":
-        return await catToolImpl(actionObject.path)
-      case "ls":
-        return await lsToolImpl(actionObject.path, actionObject.recursive)
-      case "search":
-        return await searchToolImpl(actionObject.description)
-      case "write":
-        return await writeToolImpl(actionObject.path, actionObject.contents)
-      case "replace":
-        return await replaceToolImpl(
-          actionObject.path,
-          actionObject.old,
-          actionObject.new
-        )
-      case "ask":
-        return await askToolImpl(actionObject.question)
-      case "npm":
-        return await npmToolImpl(actionObject.script)
-      case "done":
-        return await doneToolImpl()
-      default:
-        return `ERROR: Unknown tool: ${(actionObject as any)?.tool}`
+    try {
+      const tool = actionObject.tool
+      const result = await ToolEngine[tool](actionObject as never)
+      return result
+    } catch (error) {
+      return `ERROR: Unknown tool: ${(actionObject as any)?.tool}`
     }
   }
 
