@@ -24,7 +24,9 @@ To set up the local development environment for the Spellbound extension, see th
 
 ## Usage
 
-To use Spellbound, simply interact with your codebase as usual. Whenever you need help, type your request using natural language in a comment or in the Spellbound dialog. Spellbound will use the OpenAI API to help you generate code, troubleshoot, and offer suggestions.
+To use Spellbound, simply interact with your codebase as usual. Whenever you need help, type your request in the Spellbound dialog. Spellbound will use the OpenAI API to help you generate code, troubleshoot, and offer suggestions.
+
+Spellbound uses a "thought/action" control loop to create an autonomous coding agent, as described in the **[ReAct paper](https://arxiv.org/abs/2210.03629)**. The agent is able to take actions based on its current thoughts, and its future thoughts are influenced by the results of its actions.
 
 ## Tools
 
@@ -45,7 +47,8 @@ The following tools are available for use in Spellbound. The underlying AI model
 
 - Code generation based on natural language input
 - Troubleshooting and bug fixing assistance
-- Code snippet suggestions
+- Documentation writing and code critique
+- Autonomous and goal-seeking coding agents
 - Integration with your existing VS Code workflow
 
 ## License
