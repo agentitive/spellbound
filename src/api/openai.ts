@@ -127,11 +127,23 @@ export async function streamInference(
   let _reject: (reason?: any) => void
 
   const req = https.request(options, (res) => {
+    res.setTimeout(2000)
+
+    res.on("timeout", () => {
+      const error = new Error("Timeout: Request took too long to respond.")
+      req.destroy(error)
+      if (callbacks.onError) {
+        callbacks.onError(error)
+      }
+      _reject(error)
+    })
+
     res.on("data", (chunk) => {
       const completion = parseCompletionDataChunk(chunk)
 
       if (completion) {
         buffer += completion
+        console.log(buffer)
 
         callbacks.onData(completion)
       }
