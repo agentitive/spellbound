@@ -22,6 +22,14 @@
     "url": "git+ssh://git@github.com/poteat/spellbound.git"
   },
   "contributes": {
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "spellbound.indexFolder",
+          "when": "explorerResourceIsFolder"
+        }
+      ]
+    },
     "configuration": {
       "title": "Spellbound",
       "properties": {
@@ -83,6 +91,10 @@
       {
         "command": "spellbound.indexWorkspace",
         "title": "Spellbound: Index the current workspace"
+      },
+      {
+        "command": "spellbound.indexFolder",
+        "title": "Spellbound: Index the folder contents"
       }
     ]
   },
