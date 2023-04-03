@@ -6,7 +6,7 @@
 <br>
 
 <p align="center">
-  <i>Functional and composable type utilities</i>
+  <i>Autonomous and goal-seeking code agents</i>
 </p>
 
 ---
