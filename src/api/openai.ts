@@ -1,4 +1,6 @@
 import * as https from "https"
+import { getOpenAIKey } from "../environment/getOpenAIKey"
+import { getCurrentModel } from "../environment/getCurrentModel"
 
 type Callbacks = {
   onData: (chunk: string) => void
@@ -6,7 +8,7 @@ type Callbacks = {
   onEnd?: () => void
 }
 
-type Message = { role: string; content: string }
+export type Message = { role: string; content: string }
 
 type MessageCompletionChunk = {
   id: string
@@ -96,12 +98,18 @@ function parseCompletionDataChunk(buffer: Buffer): string {
   return contentOutput
 }
 
-export async function streamingCompletion(
-  apiKey: string,
-  model: string,
+export async function streamInference(
   messages: Message[],
   callbacks: Callbacks
-): Promise<string> {
+): Promise<string | undefined> {
+  const apiKey = getOpenAIKey()
+
+  const model = await getCurrentModel()
+
+  if (!apiKey || !model) {
+    return
+  }
+
   const options: https.RequestOptions = {
     hostname: "api.openai.com",
     path: `/v1/chat/completions`,

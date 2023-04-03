@@ -1,9 +1,8 @@
 import * as vscode from "vscode"
+import { Message, streamInference } from "../api/openai"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
-  constructor(private readonly extensionUri: vscode.Uri) {
-    console.log("Chatbox view provider created")
-  }
+  constructor(private readonly extensionUri: vscode.Uri) {}
 
   resolveWebviewView(webviewView: vscode.WebviewView) {
     webviewView.webview.options = {
@@ -13,24 +12,207 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getChatboxHtml()
 
-    console.log("Chatbox view resolved")
+    webviewView.webview.onDidReceiveMessage((message) => {
+      switch (message.command) {
+        case "sendPrompt":
+          this.handleSendPrompt(webviewView, message.messages)
+          break
+      }
+    })
+  }
 
-    // Implement the functionality of the chatbox here.
+  async handleSendPrompt(webviewView: vscode.WebviewView, messages: Message[]) {
+    const onStart = () => {
+      webviewView.webview.postMessage({
+        command: "sendMessage",
+        message: { content: "", type: "start" },
+      })
+    }
+
+    const onData = (output: string) => {
+      webviewView.webview.postMessage({
+        command: "sendMessage",
+        message: { content: output, type: "chunk" },
+      })
+    }
+
+    const onEnd = () => {
+      webviewView.webview.postMessage({
+        command: "sendMessage",
+        message: { content: "", type: "done" },
+      })
+    }
+
+    // Update the chat UI with the user's prompt
+    webviewView.webview.postMessage({
+      command: "sendMessage",
+      message: {
+        content: messages[messages.length - 1].content,
+        type: "input",
+      },
+    })
+
+    onStart()
+
+    // Call the streamInference function
+    await streamInference(messages, {
+      onData,
+      onEnd,
+    })
   }
 
   private getChatboxHtml() {
+    let sendButtonScript = `
+    (function () {
+      const vscode = acquireVsCodeApi();
+
+      const sendButton = document.querySelector('#input-area button');
+      const inputField = document.querySelector('#input-area input');
+      const messageHistoryContainer = document.querySelector("#message-history");
+
+      const messages = []
+
+      sendButton.addEventListener("click", () => {
+        const prompt = inputField.value.trim()
+        if (prompt) {
+          // Pass the prompt to the extension
+          console.log("SENDING MESSAGE", prompt)
+          vscode.postMessage({
+            command: "sendPrompt",
+            messages: [...messages, { role: "system", content: prompt }],
+          })
+          inputField.value = ""
+        }
+      })
+  
+      inputField.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          sendButton.click();
+        }
+      });
+
+      function addMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = message.type === 'input' ? 'user-message' : 'response-message';
+        messageElement.textContent = message.content;
+        messageHistoryContainer.appendChild(messageElement);
+
+        if (message.type === 'start' || message.type === 'input') {
+          messages.push({
+            role: message.type === 'input' ? 'system' : 'assistant',
+            content: message.content ?? "",
+          })
+        }
+      }
+      
+      // Add a message event listener to handle 'addMessage' command
+      window.addEventListener('message', (event) => {
+        const message = event.data; // The JSON data our extension sent
+        switch (message.command) {
+          case 'sendMessage':
+            switch(message.message.type) {
+              case 'start':
+                addMessage(message.message);
+                break;
+              case 'chunk':
+                const lastResponse = document.querySelector('.response-message:last-child');
+                lastResponse.textContent += message.message.content;
+                messages[messages.length - 1].content += message.message.content;
+                break;
+              case 'done':
+                // Todo: re-enable the input area
+                break;
+              case 'input':
+                addMessage(message.message);
+                break;
+            }
+            break;
+        }
+      });
+    })();`
+
     return `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Chatbox</title>
+        <style>
+          /* Add your chatbox CSS code here */
+          body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #CCC;
+            background-color: #020408;
+          }
+  
+          #message-history {
+            position: relative;
+            overflow-y: auto;
+            padding: 16px;
+            height: calc(100% - 70px);
+          }
+        
+          #input-area {
+            position: absolute;
+            bottom: 0;
+            width: 95%;
+            padding: 8px;
+            display: flex;
+          }
+  
+          #input-area input {
+            flex-grow: 1;
+            outline: none;
+            border: none;
+            border-radius: 2px;
+            padding: 6px;
+            font-size: 14px;
+            color: #CCC;
+            background-color: #0e1116;
+          }
+  
+          #input-area input:focus {
+            border: 1px solid #007fd4;
+          }
+          
+          #input-area button {
+            background-color: #438440;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            cursor: pointer;
+            margin-left: 4px;
+            font-size: 14px;
+            border-radius: 2px;
+            outline: none;
+          }
+  
+          #input-area button:hover {
+            background-color: #488848;
+          }
+        </style>
       </head>
       <body>
-        <!-- Add your chatbox HTML code here -->
-        <h1>Chatbox</h1>
+        <div id="message-history">
+          <!-- Render your text message-style history here -->
+        </div>
+        <div id="input-area">
+          <input type="text" placeholder="Message (Enter to send)">
+          <button>></button>
+        </div>
+        <script>
+          window.acquireVsCodeApi = acquireVsCodeApi
+        </script>
+        <script>
+          ${sendButtonScript}
+        </script>
       </body>
       </html>
     `
