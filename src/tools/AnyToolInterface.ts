@@ -6,6 +6,7 @@ import { ReplaceToolInterface } from "./replace/ReplaceToolInterface"
 import { AskToolInterface } from "./ask/AskToolInterface"
 import { NpmToolInterface } from "./npm/NpmToolInterface"
 import { DoneToolInterface } from "./done/DoneToolInterface"
+import { StatsToolInterface } from "./stats/StatsToolInterface"
 
 export type AnyToolInterface =
   | CatToolInterface
@@ -16,3 +17,4 @@ export type AnyToolInterface =
   | AskToolInterface
   | NpmToolInterface
   | DoneToolInterface
+  | StatsToolInterface

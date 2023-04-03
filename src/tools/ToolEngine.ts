@@ -5,6 +5,7 @@ import { lsToolImpl } from "./ls/lsToolImpl"
 import { npmToolImpl } from "./npm/npmToolImpl"
 import { replaceToolImpl } from "./replace/replaceToolImpl"
 import { searchToolImpl } from "./search/searchToolImpl"
+import { statsToolImpl } from "./stats/statsToolImpl"
 import { writeToolImpl } from "./write/writeToolImpl"
 
 export const ToolEngine = {
@@ -15,5 +16,6 @@ export const ToolEngine = {
   npm: npmToolImpl,
   replace: replaceToolImpl,
   search: searchToolImpl,
+  stats: statsToolImpl,
   write: writeToolImpl,
 }
