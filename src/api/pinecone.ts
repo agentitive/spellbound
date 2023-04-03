@@ -39,11 +39,15 @@ const convertChunk = (chunk: Chunk, metadata = {}) => ({
 const upsertChunks = async (chunks: Chunk[], namespace = "", metadata = {}) => {
     const index = await getIndex()
     const vectors = chunks.map(convertChunk, metadata)
+    console.log(`Upserting chunks:`)
+    for (let i = 0; i < vectors.length; i += 100) {
+        console.log(`  ${i} - ${i + 100} of ${vectors.length}`)
     const upsertRequest = {
-        vectors,
+            vectors: vectors.slice(i, i + 100),
         namespace,
     }
     await index.upsert({ upsertRequest })
+}
 }
 
 export const upsertFile = async (filename: string, block_size: number, block_overlap: number, metadata: any, namespace = "") => {
