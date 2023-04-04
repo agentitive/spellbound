@@ -11,7 +11,7 @@
 
 ---
 
-**Spellbound** is a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=poteat-vsce.spellbound) that leverages the power of the OpenAI API to create an intelligent coding assistant. With _Spellbound_, you can harness the capabilities of cutting-edge AI to improve your coding experience and productivity.
+**Spellbound** is a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=mpoteat-vsce.spellbound) that leverages the power of the OpenAI API to create an intelligent coding assistant. With _Spellbound_, you can harness the capabilities of cutting-edge AI to improve your coding experience and productivity.
 
 ## Installation
 

@@ -3,10 +3,10 @@
   "displayName": "spellbound",
   "description": "Use OpenAI models to weave the magic of AI into your coding experience, generating enchanting solutions and sparking intuitive insights.",
   "license": "MIT",
-  "publisher": "poteat-vsce",
+  "publisher": "mpoteat-vsce",
   "icon": "./assets/icon.png",
   "galleryBanner.color": "#0e1116",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.77.0"
   },
