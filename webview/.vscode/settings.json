@@ -1,0 +1,17 @@
+{
+    "exportall.config.folderListener": [
+        "/src/components/Util"
+    ],
+
+    // four spaces
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+
+    // format on save
+    "editor.formatOnSave": true,
+    // fix imports
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+
+}

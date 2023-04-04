@@ -1,0 +1,38 @@
+.inputPanel {
+    position: absolute;
+    bottom: 0;
+    width: 95%;
+    padding: 8px;
+    display: flex;
+
+    .input {
+        flex-grow: 1;
+        outline: none;
+        border: none;
+        border-radius: 2px;
+        padding: 6px;
+        font-size: 14px;
+        color: #CCC;
+        background-color: #0e1116;
+    }
+
+    .input:focus {
+        border: 1px solid #007fd4;
+    }
+
+    .button {
+        background-color: #438440;
+        border: none;
+        color: white;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-left: 4px;
+        font-size: 14px;
+        border-radius: 2px;
+        outline: none;
+    }
+
+    .button:hover {
+        background-color: #488848;
+    }
+}
