@@ -7,5 +7,6 @@
     "sourceMap": true,
     "rootDir": "src",
     "strict": true
-  }
+  },
+  "exclude": ["node_modules", "webview"]
 }
