@@ -5,7 +5,7 @@
     padding: 8px;
     display: flex;
 
-    .input {
+    & > input {
         flex-grow: 1;
         outline: none;
         border: none;
@@ -16,11 +16,11 @@
         background-color: #0e1116;
     }
 
-    .input:focus {
+    & > input:focus {
         border: 1px solid #007fd4;
     }
 
-    .button {
+    & > button {
         background-color: #438440;
         border: none;
         color: white;
@@ -32,7 +32,7 @@
         outline: none;
     }
 
-    .button:hover {
+    & > button:hover {
         background-color: #488848;
     }
 }

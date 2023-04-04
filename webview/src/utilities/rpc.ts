@@ -3,9 +3,11 @@ import useStore from "../store";
 import { vscode } from "./vscode";
 
 export const useRpc = () => {
-    const { messages, addMessage, updateMessage } =
+    const { isThinking, setIsThinking, messages, addMessage, updateMessage } =
 
         useStore(state => ({
+            isThinking: state.isThinking,
+            setIsThinking: state.setIsThinking,
             messages: state.messages,
             addMessage: state.addMessage,
             updateMessage: state.updateMessage
@@ -17,6 +19,7 @@ export const useRpc = () => {
             case 'sendMessage':
                 switch (message.message.type) {
                     case 'start':
+                        setIsThinking(true);
                         addMessage({
                             role: 'assistant',
                             content: ''
@@ -29,7 +32,7 @@ export const useRpc = () => {
                         updateMessage(messages.length - 1, oldContent + newContent)
                         break;
                     case 'done':
-                        // Todo: re-enable the input area
+                        setIsThinking(false);
                         break;
                     case 'input':
                         addMessage({
