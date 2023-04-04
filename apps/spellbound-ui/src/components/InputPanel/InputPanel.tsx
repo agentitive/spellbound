@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import styles from "./styles.module.scss"
 import { vscode } from "../../utilities/vscode";
+
+import { client } from "../../utilities/rpc";
 import useStore from "../../store";
 
 export function InputPanel() {
@@ -28,6 +30,8 @@ export function InputPanel() {
     if (e.key === "Enter") {
       e.preventDefault()
       onClick()
+    } else if (e.key === "Escape") {
+      client.popup.query("This is a test!")
     }
   }
 

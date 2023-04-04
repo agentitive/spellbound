@@ -1,6 +1,12 @@
 import { useEffect } from "react";
-import useStore from "../store";
+
 import { vscode } from "./vscode";
+import useStore from "../store";
+import { makeClient } from "./trpc";
+
+console.log(`Creating TRPC server client...`);
+export const client = makeClient()
+
 
 export const useRpc = () => {
     const { isThinking, setIsThinking, messages, addMessage, updateMessage } =

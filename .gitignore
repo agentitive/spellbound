@@ -71,3 +71,5 @@ common/autoinstallers/*/.npmrc
 
 # Heft temporary files
 .heft
+dist
+apps/spellbound/static
