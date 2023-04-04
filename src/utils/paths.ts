@@ -1,11 +1,8 @@
-import * as vscode from "vscode"
+import { join, relative } from "path"
+import { getCurrentWorkspaceFolder } from "./getCurrentWorkspaceFolder"
 
-import { join } from "path"
+export const makeRelative = (path: string) =>
+  relative(getCurrentWorkspaceFolder(), path)
 
-export const makeRelative = 
-    (path: string) => 
-        path.replace(vscode.workspace.workspaceFolders?.[0].uri.fsPath!, "")
-
-export const makeAbsolute =
-    (path: string) =>
-        join(vscode.workspace.workspaceFolders?.[0].uri.fsPath!, path)
+export const makeAbsolute = (path: string) =>
+  join(getCurrentWorkspaceFolder(), path)
