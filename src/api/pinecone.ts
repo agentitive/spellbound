@@ -6,6 +6,8 @@ import { embedChunks } from "./openai"
 import { Chunk, chunkFile, chunkFolder } from "../utils/chunking"
 import { createUUID } from "../utils/uuid"
 
+import * as https from "https"
+
 const createClient = async () => {
   const pinecone = new PineconeClient()
 
@@ -94,10 +96,22 @@ export const query = async (
   return index.query({ queryRequest })
 }
 
+/**
+ * Delete using https request
+ */
+export function deleteIndexNamespace(namespace: string) {
+  https.request({
+    hostname: "api.pinecone.io",
+    path: `/v1/indexes/${getPineconeIndex()}/namespaces/${namespace}`,
+  })
+}
+
 export const clearNamespace = async (namespace = "") => {
   const client = await createClient()
+
   const indexName = getPineconeIndex()
   const index = client.Index(indexName!)
+
   return index.delete1({ deleteAll: true, namespace })
 }
 
