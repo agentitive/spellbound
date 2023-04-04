@@ -1,20 +1,23 @@
-import vscode from 'vscode';
-
 import { initTRPC } from '@trpc/server';
+import { Message } from '../types';
  
 const t = initTRPC.create();
  
-export const serverRouter = t.router({
-    popup: t.procedure
+export type ServerHandlers = {
+    submit: (messages: Message[]) => Promise<void>;
+}
+
+export const makeServerRouter = (handlers: ServerHandlers) => t.router({
+    submit: t.procedure
         .input((val: unknown) => {
-            if (typeof val !== 'string') {
-                throw new Error('not a string');
+            if (typeof val !== 'object') {
+                throw new Error('not an array');
             }
-            return val;
+            return val as Message[];
         })
         .query(({ input }) => {
-            vscode.window.showInformationMessage(input);
+            handlers.submit(input);
         })
 });
 
-export type ServerRouter = typeof serverRouter;
+export type ServerRouter = ReturnType<typeof makeServerRouter>;
