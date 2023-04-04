@@ -5,7 +5,10 @@ import { vscode } from "../../utilities/vscode";
 import useStore from "../../store";
 
 export function InputPanel() {
-  const { messages } = useStore(state => ({ messages: state.messages }))
+  const { messages, isThinking } = useStore(state => ({ 
+    messages: state.messages,
+    isThinking: state.isThinking
+  }))
   const [input, setInput] = useState("");
 
   const onClick = () => {
@@ -21,15 +24,27 @@ export function InputPanel() {
     }
   }
 
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      onClick()
+    }
+  }
+
   return (
     <div className={styles.inputPanel}>
       <input
         type="text"
         value={input}
+        disabled={isThinking}
         placeholder="Message (Enter to send)"
+        onKeyDown={onKeyDown}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button onClick={onClick}>Send</button>
+      <button 
+        onClick={onClick}
+        disabled={isThinking}
+      >Send</button>
     </div>
   );
 }

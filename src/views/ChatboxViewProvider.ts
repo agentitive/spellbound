@@ -188,9 +188,10 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         <title>Chatbox</title>
         <style>
           body, html {
+            height: 100vh;
+            overflow: hidden;
             margin: 0;
             padding: 0;
-            height: 100%;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #CCC;
             background-color: #020408;
