@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import styles from "./styles.module.scss"
-import { vscode } from "../../utilities/vscode";
 
 import { client } from "../../utilities/rpc";
 import useStore from "../../store";
@@ -16,12 +15,7 @@ export function InputPanel() {
   const onClick = () => {
     const prompt = input.trim()
     if (prompt) {
-      // Pass the prompt to the extension
-      vscode.postMessage({
-        command: "sendPrompt",
-        messages: [...messages, { role: "system", content: prompt }],
-      })
-      
+      client.submit.query([...messages, { role: "system", content: prompt }])
       setInput("")
     }
   }
@@ -30,8 +24,6 @@ export function InputPanel() {
     if (e.key === "Enter") {
       e.preventDefault()
       onClick()
-    } else if (e.key === "Escape") {
-      client.popup.query("This is a test!")
     }
   }
 

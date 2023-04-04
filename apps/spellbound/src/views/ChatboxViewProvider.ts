@@ -2,7 +2,7 @@ import * as vscode from "vscode"
 import markdownit from "markdown-it"
 import { streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
-import { ServerRouter, Message, Server, serverRouter, MessagePipe } from "spellbound-shared"
+import { makeServerRouter, ServerRouter, Message, Server, MessagePipe } from "spellbound-shared"
 
 import YAML from "yaml"
 import { AnyToolInterface } from "../tools/AnyToolInterface"
@@ -29,8 +29,14 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getChatboxHtml()
 
+    const serverRouter = makeServerRouter({
+      submit: async (messages: Message[]) => {
+        this.handleSendPrompt(webviewView, messages)
+      },
+    })
+
     const serverPipe = new MessagePipe(
-      (message) => webviewView.webview.postMessage(message),
+      (message: any) => webviewView.webview.postMessage(message),
     )
 
     const server = new Server(serverPipe, {
@@ -39,12 +45,6 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage(async (message) => {
       await serverPipe.receive(message)
-
-      switch (message.command) {
-        case "sendPrompt":
-          this.handleSendPrompt(webviewView, message.messages)
-          break
-      }
     })
   }
 
