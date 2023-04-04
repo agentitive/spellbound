@@ -6,6 +6,7 @@ import { fillPrompt } from "../prompts/fillPrompt"
 import YAML from "yaml"
 import { AnyToolInterface } from "../tools/AnyToolInterface"
 import { ToolEngine } from "../tools/ToolEngine"
+import { readFileSync } from "fs"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {}
@@ -162,89 +163,21 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   }
 
   private getChatboxHtml() {
-    let sendButtonScript = `
-    (function () {
-      const vscode = acquireVsCodeApi();
+    const scriptFilename = "webview/build/static/js/main.js"
+    const scriptUri = this.extensionUri.with({
+      path: this.extensionUri.path + "/" + scriptFilename,
+    })
+    // load script text
+    const scriptText = readFileSync(scriptUri.fsPath, "utf8")
 
-      const sendButton = document.querySelector('#input-area button');
-      const inputField = document.querySelector('#input-area input');
-      const messageHistoryContainer = document.querySelector("#message-history");
+    const stylesFilename = "webview/build/static/css/main.css"
+    const stylesUri = this.extensionUri.with({
+      path: this.extensionUri.path + "/" + stylesFilename,
+    })
+    // load script text
+    const stylesText = readFileSync(stylesUri.fsPath, "utf8")
 
-      const messages = []
-
-      sendButton.addEventListener("click", () => {
-        const prompt = inputField.value.trim()
-        if (prompt) {
-          // Pass the prompt to the extension
-          vscode.postMessage({
-            command: "sendPrompt",
-            messages: [...messages, { role: "system", content: prompt }],
-          })
-          inputField.value = ""
-        }
-      })
-  
-      inputField.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          sendButton.click();
-        }
-      });
-
-      function addMessage(message) {
-        const messageElement = document.createElement('div');
-        messageElement.className = message.type === 'input' ? 'user-message' : 'response-message';
-        messageElement.textContent = message.content;
-        messageHistoryContainer.appendChild(messageElement);
-
-        if (message.type === 'input') {
-          messageElement.innerHTML = message.rendered;
-        }
-
-        if (message.type === 'start' || message.type === 'input') {
-          messages.push({
-            role: message.type === 'input' ? 'system' : 'assistant',
-            content: message.content ?? "",
-          })
-        }
-      }
-      
-      // Add a message event listener to handle 'addMessage' command
-      window.addEventListener('message', (event) => {
-        const message = event.data; // The JSON data our extension sent
-        switch (message.command) {
-          case 'sendMessage':
-            switch(message.message.type) {
-              case 'start':
-                addMessage(message.message);
-                break;
-              case 'chunk':
-                const lastResponse = document.querySelector('.response-message:last-child');
-
-                lastResponse.innerHTML = message.message.rendered;
-
-                messages[messages.length - 1].content += message.message.content;
-                break;
-              case 'done':
-                // Todo: re-enable the input area
-                break;
-              case 'input':
-                addMessage(message.message);
-                break;
-              case 'tool-result':
-                // Treat the tool result as a prompt (implement 'thought-loop')
-                vscode.postMessage({
-                  command: "sendPrompt",
-                  messages: [...messages, { role: "system", content: message.message.content }]
-                })
-                break;
-            }
-            break;
-        }
-      });
-    })();`
-
-    return `
+    return /* html */`
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -254,11 +187,6 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Chatbox</title>
         <style>
-          /* Add your chatbox CSS code here */
-
-          pre { white-space: pre-wrap; word-wrap: break-word; }
-          code { display: inline; padding: 0.5em; overflow-x: auto; }
-          
           body, html {
             margin: 0;
             padding: 0;
@@ -267,82 +195,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
             color: #CCC;
             background-color: #020408;
           }
-  
-          #message-history {
-            position: relative;
-            overflow-y: auto;
-            padding: 16px;
-            height: calc(100% - 70px);
-          }
-        
-          #input-area {
-            position: absolute;
-            bottom: 0;
-            width: 95%;
-            padding: 8px;
-            display: flex;
-          }
-  
-          #input-area input {
-            flex-grow: 1;
-            outline: none;
-            border: none;
-            border-radius: 2px;
-            padding: 6px;
-            font-size: 14px;
-            color: #CCC;
-            background-color: #0e1116;
-          }
-  
-          #input-area input:focus {
-            border: 1px solid #007fd4;
-          }
-          
-          #input-area button {
-            background-color: #438440;
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            cursor: pointer;
-            margin-left: 4px;
-            font-size: 14px;
-            border-radius: 2px;
-            outline: none;
-          }
-  
-          #input-area button:hover {
-            background-color: #488848;
-          }
-
-          .user-message {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-          }
-        
-          .response-message {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-          }
+          ${stylesText}
         </style>
       </head>
       <body>
-        <div id="message-history">
-          <!-- Render your text message-style history here -->
-        </div>
-        <div id="input-area">
-          <input type="text" placeholder="Message (Enter to send)">
-          <button>></button>
-        </div>
-        <script>
-          window.acquireVsCodeApi = acquireVsCodeApi
-        </script>
-        <script>
-          ${sendButtonScript}
-        </script>
+        <div id="root"></div>
+        <script>${scriptText}</script>
       </body>
       </html>
     `
