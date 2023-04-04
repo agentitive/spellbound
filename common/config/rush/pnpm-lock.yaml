@@ -11,7 +11,7 @@ importers:
       '@types/ejs': ^3.1.2
       '@types/markdown-it': ^12.2.3
       '@types/node': ~18.15.11
-      '@types/vscode': ^1.77.0
+      '@types/vscode': ^1.73.0
       '@typescript-eslint/eslint-plugin': ^5.56.0
       '@typescript-eslint/parser': ^5.56.0
       copy-webpack-plugin: ~11.0.0
@@ -21,6 +21,7 @@ importers:
       markdown-it: ^13.0.1
       node-fetch: ^3.3.1
       spellbound-shared: workspace:^0.0.3
+      spellbound-ui: workspace:^0.0.3
       ts-loader: ^9.4.2
       typescript: ~5.0.3
       webpack: ^5.76.3
@@ -43,6 +44,7 @@ importers:
       '@typescript-eslint/parser': 5.57.1_eslint@8.37.0+typescript@5.0.3
       copy-webpack-plugin: 11.0.0_webpack@5.77.0
       eslint: 8.37.0
+      spellbound-ui: link:../spellbound-ui
       ts-loader: 9.4.2_typescript@5.0.3+webpack@5.77.0
       typescript: 5.0.3
       webpack: 5.77.0_webpack-cli@5.0.1
@@ -50,11 +52,18 @@ importers:
 
   ../../apps/spellbound-shared:
     specifiers:
+      '@trpc/server': ~10.18.0
       '@types/node': ~18.15.11
+      '@types/vscode': ^1.73.0
       node-rig: workspace:^0.0.1
       typescript: ~5.0.3
+      zustand: ^4.1.4
+    dependencies:
+      '@trpc/server': 10.18.0
+      zustand: 4.3.7
     devDependencies:
       '@types/node': 18.15.11
+      '@types/vscode': 1.77.0
       node-rig: link:../../rigs/node-rig
       typescript: 5.0.3
 
@@ -64,7 +73,7 @@ importers:
       '@fortawesome/free-solid-svg-icons': ~6.4.0
       '@fortawesome/react-fontawesome': ~0.2.0
       '@trpc/client': ^10.18.0
-      '@trpc/server': ^10.18.0
+      '@trpc/server': ~10.18.0
       '@types/node': ~18.15.11
       '@types/react': ^17.0.37
       '@types/react-dom': ^17.0.11
@@ -3003,7 +3012,6 @@ packages:
 
   /@trpc/server/10.18.0:
     resolution: {integrity: sha512-nVMqdDIF9YLOeC3g6RdAvdCPqkHFjpshSqZGThZ+fyjiWSUXj2ZKCduhJFnY77TjtgODojeaaghmzcnjxb+Onw==}
-    dev: true
 
   /@trysound/sax/0.2.0:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
@@ -12518,6 +12526,12 @@ packages:
       querystringify: 2.2.0
       requires-port: 1.0.0
 
+  /use-sync-external-store/1.2.0:
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dev: false
+
   /use-sync-external-store/1.2.0_react@17.0.2:
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
@@ -13355,6 +13369,21 @@ packages:
       validator: 13.9.0
     optionalDependencies:
       commander: 9.5.0
+
+  /zustand/4.3.7:
+    resolution: {integrity: sha512-dY8ERwB9Nd21ellgkBZFhudER8KVlelZm8388B5nDAXhO/+FZDhYMuRnqDgu5SYyRgz/iaf8RKnbUs/cHfOGlQ==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      use-sync-external-store: 1.2.0
+    dev: false
 
   /zustand/4.3.7_react@17.0.2:
     resolution: {integrity: sha512-dY8ERwB9Nd21ellgkBZFhudER8KVlelZm8388B5nDAXhO/+FZDhYMuRnqDgu5SYyRgz/iaf8RKnbUs/cHfOGlQ==}

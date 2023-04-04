@@ -1,5 +1,5 @@
-import { Message } from 'spellbound-shared';
 import { create } from 'zustand';
+import { Message } from 'spellbound-shared/src/types';
 
 
 export type DocumentState = {
