@@ -1,0 +1,12 @@
+.app {
+    height: 100vh;
+
+    display: "flex";
+    flex-direction: column;
+    justify-content: "stretch";
+    align-items: "stretch";
+
+    & > h1 {
+        text-align: center;
+    }
+}    
