@@ -22,6 +22,20 @@
       "port": 9222,
       "sourceMaps": true,
       "webRoot": "${workspaceFolder}"
+    },
+    {
+        "name": "Launch Extension",
+        "type": "extensionHost",
+        "request": "launch",
+        "cwd": "${workspaceFolder}/apps/spellbound/",
+        "args": [
+            "--extensionDevelopmentPath=${workspaceFolder}/apps/spellbound/"
+        ],
+        "outFiles": [
+            "${workspaceFolder}/apps/spellbound/dist/**/*.js"
+        ],
+        // run rushx build in apps/examples/flow-editor first
+        // "preLaunchTask": "rush build"
     }
   ]
 }

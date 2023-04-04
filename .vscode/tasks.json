@@ -35,6 +35,12 @@
 				"npm: watch-tests"
 			],
 			"problemMatcher": []
-		}
+		},
+		{
+            "type": "shell",
+            "command": "rush build && rush generate-commands",
+            "label": "rush build",
+            "problemMatcher": [],
+        }
 	]
 }
