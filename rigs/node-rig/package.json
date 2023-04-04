@@ -1,0 +1,23 @@
+{
+    "name": "node-rig",
+    "version": "0.0.1",
+    "description": "A rig package for Node.js projects that build using Heft",
+    "license": "MIT",
+    "scripts": {
+      "build": "",
+      "_phase:build": ""
+    },
+    "peerDependencies": {
+      "@rushstack/heft": "^0.48.7"
+    },
+    "dependencies": {
+      "eslint": "^8.36.0",
+      "jest-environment-node": "~27.4.2",
+      "typescript": "~5.0.3"
+    },
+    "devDependencies": {
+      "@rushstack/heft": "0.48.7",
+      "eslint": "^8.36.0",
+      "typescript": "~5.0.3"
+    }
+  }
