@@ -257,7 +257,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
           /* Add your chatbox CSS code here */
 
           pre { white-space: pre-wrap; word-wrap: break-word; }
-          code { display: block; padding: 0.5em; overflow-x: auto; }
+          code { display: inline; padding: 0.5em; overflow-x: auto; }
           
           body, html {
             margin: 0;
