@@ -43,5 +43,5 @@ I need to find the file that contains the function that is called when the user 
 
 ```yaml
 tool: search
-description: "logic that handles user clicking on submit button"
+topic: "logic that handles user clicking on submit button"
 ```
