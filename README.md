@@ -17,6 +17,7 @@
 
 1. Install the Spellbound VS Code extension from the marketplace.
 2. Obtain an API key for the OpenAI API and configure it in your VS Code settings.
+3. Obtain a Pinecone API key, create a Pinecone index, and configure it in your VS Code settings.
 
 ## Usage
 
@@ -26,11 +27,13 @@ Spellbound uses a "thought/action" control loop to create an autonomous coding a
 
 ## Extension Settings
 
-| Parameter                   | Description                                          | Default | Scope   |
-| --------------------------- | ---------------------------------------------------- | ------- | ------- |
-| spellbound.openai_api_key   | Enter your OpenAI API key here, used for inference.  |         | machine |
-| spellbound.pinecone_api_key | Enter your Pinecone API key here, used for search.   |         | machine |
-| spellbound.model            | Select the AI model used by the Spellbound extension | gpt-4   |         |
+| Parameter                       | Description                                          | Default | Scope   |
+| ------------------------------- | ---------------------------------------------------- | ------- | ------- |
+| spellbound.model                | Select the AI model used by the Spellbound extension | gpt-4   |         |
+| spellbound.openai_api_key       | Enter your OpenAI API key here, used for inference.  |         | machine |
+| spellbound.pinecone_api_key     | Enter your Pinecone API key here, used for search.   |         | machine |
+| spellbound.pinecone_index       | Enter your Pinecone index name here, used for search |         | machine |
+| spellbound.pinecone_environment | Enter your Pinecone environment here, used for search |         | machine |
 
 ### Configuring Settings
 

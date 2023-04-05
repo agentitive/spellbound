@@ -7,6 +7,16 @@ This document provides instructions for setting up the local development environ
 - Node.js (v19.x.x recommended)
 - Visual Studio Code (v1.77.0 or later)
 
+## Rush Monorepo
+
+The Spellbound repository is a [Rush](https://rushjs.io/) monorepo. This means that the repository contains multiple projects, each of which is a separate Node.js package. Rush uses [pnpm](https://pnpm.io/) under the hood.
+
+Installing Rush:
+
+```
+npm install -g @microsoft/rush pnpm
+```
+
 ## Steps to set up the local development environment
 
 1. Clone the repository using `git`:
@@ -24,13 +34,13 @@ This document provides instructions for setting up the local development environ
 3. Install dependencies:
 
    ```
-   npm install
+   rush update
    ```
 
-4. Compile the extension:
+4. Compile the projects:
 
    ```
-   npm run compile
+   rush build
    ```
 
 5. Open the project folder in Visual Studio Code:
