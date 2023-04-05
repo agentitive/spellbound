@@ -1,17 +1,8 @@
 import { vscode } from "./vscode";
 import useStore from "../store";
-import { makeWebviewRpc } from "spellbound-shared";
+import { ExtensionProcedures, createBirpc } from "spellbound-shared";
 
-export const rpc = makeWebviewRpc({
-    post: data => {
-        vscode.postMessage(data)
-    },
-    on: cb => {
-        window.addEventListener('message', event => {
-            cb(event.data)
-        })
-    }
-},{
+export const rpc = createBirpc<ExtensionProcedures>({
     start: async () => {
         const { setIsThinking, addMessage } = useStore.getState();
 
@@ -37,4 +28,13 @@ export const rpc = makeWebviewRpc({
             content: message
         })
     },
+}, {
+    post: data => {
+        vscode.postMessage(data)
+    },
+    on: cb => {
+        window.addEventListener('message', event => {
+            cb(event.data)
+        })
+    }
 })

@@ -7,7 +7,7 @@ import YAML from "yaml"
 import { AnyToolInterface } from "../tools/AnyToolInterface"
 import { ToolEngine } from "../tools/ToolEngine"
 import { readFileSync } from "fs"
-import { BirpcReturn, Message, WebviewProcedures, createBirpc, makeExtensionRpc } from "spellbound-shared"
+import { BirpcReturn, Message, WebviewProcedures, createBirpc } from "spellbound-shared"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly extensionUri: vscode.Uri) {
@@ -125,7 +125,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
         const errorMessage = `ERROR: Could not parse tool action: ${err?.message}`
 
-        await rpc.result(errorMessage)        
+        await rpc.result(errorMessage)
       }
     } else {
       console.error("No tool action found in message:\n\n", lastMessage.content)
