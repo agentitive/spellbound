@@ -41,6 +41,14 @@
             "command": "rush build && rush generate-commands",
             "label": "rush build",
             "problemMatcher": [],
+        },
+		{
+            "type": "npm",
+            "script": "start",
+            "label": "site",
+			"options": {
+				"cwd": "${workspaceFolder}/apps/agentitive-site"
+			}
         }
 	]
 }

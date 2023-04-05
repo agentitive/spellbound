@@ -413,6 +413,10 @@
     {
       "packageName": "spellbound-ui",
       "projectFolder": "apps/spellbound-ui"
+    },
+    {
+      "packageName": "agentitive-site",
+      "projectFolder": "apps/agentitive-site"
     }
   ]
 }
