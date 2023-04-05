@@ -6,14 +6,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch Extension",
       "type": "extensionHost",
       "request": "launch",
-      "name": "Run Extension",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "timeout": 60000,
-      "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-      "preLaunchTask": "${defaultBuildTask}"
+      "cwd": "${workspaceFolder}/apps/spellbound/",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/spellbound/"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/apps/spellbound/dist/**/*.js"
+      ],
+      // run rushx build in apps/examples/flow-editor first
+      // "preLaunchTask": "rush build"
     },
     {
       "type": "chrome",
@@ -22,20 +26,6 @@
       "port": 9222,
       "sourceMaps": true,
       "webRoot": "${workspaceFolder}"
-    },
-    {
-        "name": "Launch Extension",
-        "type": "extensionHost",
-        "request": "launch",
-        "cwd": "${workspaceFolder}/apps/spellbound/",
-        "args": [
-            "--extensionDevelopmentPath=${workspaceFolder}/apps/spellbound/"
-        ],
-        "outFiles": [
-            "${workspaceFolder}/apps/spellbound/dist/**/*.js"
-        ],
-        // run rushx build in apps/examples/flow-editor first
-        // "preLaunchTask": "rush build"
     }
   ]
 }
