@@ -1,3 +1,6 @@
 {
   "extends": "./node_modules/node-rig/profiles/default/tsconfig-base.json",
+  "compilerOptions": {
+    "types": ["node", "vscode"]
+  }
 }

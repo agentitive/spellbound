@@ -6,7 +6,8 @@ import { client } from "../../utilities/rpc";
 import useStore from "../../store";
 
 export function InputPanel() {
-  const { messages, isThinking } = useStore(state => ({ 
+  const { addMessage, messages, isThinking } = useStore(state => ({ 
+    addMessage: state.addMessage,
     messages: state.messages,
     isThinking: state.isThinking
   }))
@@ -15,7 +16,10 @@ export function InputPanel() {
   const onClick = () => {
     const prompt = input.trim()
     if (prompt) {
-      client.submit.query([...messages, { role: "system", content: prompt }])
+      const newMessage = { role: "system", content: prompt }
+      addMessage(newMessage)
+      const newMessages = [...messages, newMessage]
+      client.submit.query(newMessages)
       setInput("")
     }
   }

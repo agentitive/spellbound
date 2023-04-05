@@ -1,13 +1,17 @@
 import { AnyProcedure, AnyRouter } from "@trpc/server";
 import { TRPCRequest, TRPCClientOutgoingMessage } from "@trpc/server/rpc";
 
-import { MessagePipe } from "./MessagePipe";
+import { MessagePipe } from "../MessagePipe";
 import { SubscriptionManager } from "./SubscriptionManager";
 import { TrpcClientRequest, RpcServerOptions, TrpcServerResponse, ExecutionContext } from "./types";
 
 
 const extractRequest = (message: TrpcClientRequest): (TRPCRequest | TRPCClientOutgoingMessage) | null => {
-    if (!('trpc' in message)) {
+    if (!message) {
+        return null;
+    }
+
+    if (!message.trpc) {
         return null;
     }
 
@@ -35,7 +39,10 @@ export class Server<TRouter extends AnyRouter> {
     get router() { return this.options.router; }
     get createContext() { return this.options.createContext; }
     get onError() { return this.options.onError; }
-    get transformer() { return this.router._def._config.transformer; }
+    get transformer() {
+        console.log(`transforming`, this.router._def)
+        return this.router._def._config.transformer;
+    }
 
     sendResponse(request: TrpcClientRequest, response: TrpcServerResponse['trpc']) {
         const { id, jsonrpc } = request.trpc;
@@ -54,8 +61,16 @@ export class Server<TRouter extends AnyRouter> {
             return;
         }
 
+        console.log(`got request`, request)
+
         if ('params' in request) {
+
+
             const context = await this.execute(request);
+            if (!context) {
+                return;
+            }
+
             switch (request.method as ExecutionContext<TRouter>["method"]) {
                 case 'subscription.stop':
                     this.subs.stop(request.id!);
@@ -76,10 +91,16 @@ export class Server<TRouter extends AnyRouter> {
 
     }
 
-    async execute(request: TRPCRequest): Promise<ExecutionContext<TRouter>> {
+    async execute(request: TRPCRequest): Promise<ExecutionContext<TRouter> | null> {
+        debugger
         const params = request.params;
         const input = this.transformer.input.deserialize(params.input);
         const ctx = await this.createContext?.({ req: undefined, res: undefined });
+        const procedure = this.router._def.procedures[request.method];
+        let result = undefined;
+        if (!procedure) {
+            return null;
+        }
         const caller = this.router.createCaller(ctx);
         const segments = params.path.split('.');
         const procedureFn = segments.reduce(
@@ -87,7 +108,7 @@ export class Server<TRouter extends AnyRouter> {
             caller as any,
         ) as AnyProcedure;
 
-        const result = await procedureFn(input);
+        result = await procedureFn(input);
 
         return {
             id: request.id!,
