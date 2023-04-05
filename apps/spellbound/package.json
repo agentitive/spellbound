@@ -18,8 +18,8 @@
   ],
   "main": "./dist/extension.js",
   "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/agentitive/spellbound.git"
+    "type": "https",
+    "url": "https://github.com/agentitive/spellbound.git"
   },
   "contributes": {
     "menus": {
