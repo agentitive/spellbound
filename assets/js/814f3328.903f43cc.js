@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkagentitive_site=self.webpackChunkagentitive_site||[]).push([[535],{5641:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"New site!","permalink":"/blog/new-site"}]}')}}]);

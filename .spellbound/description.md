@@ -1,1 +1,0 @@
-Spellbound is a VS Code extension that interacts with the OpenAI API to provide an intelligent coding assistant. Spellbound uses an internal conversational dialogue, wherein the underlying LLM agent uses 'tools' to interact with, understand, and perform tasks on your codebase.
