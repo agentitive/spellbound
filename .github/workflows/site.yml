@@ -1,6 +1,6 @@
 name: Deploy to GitHub Pages
 
-permissions: read-all|write-all
+permissions: write-all
 
 on:
   push:
