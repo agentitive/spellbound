@@ -1,7 +1,7 @@
 import { AnyRouter, TRPCError } from "@trpc/server";
 import { Observable, Unsubscribable } from "@trpc/server/observable";
 import { getErrorFromUnknown } from "./utils";
-import { MessagePipe } from "./MessagePipe";
+import { MessagePipe } from "../MessagePipe";
 import { ExecutionContext } from "./types";
 
 export class SubscriptionManager<TRouter extends AnyRouter> {

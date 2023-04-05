@@ -1,4 +1,4 @@
-export * from './MessagePipe';
+export * from '../MessagePipe';
 export * from './Server';
 export * from './SubscriptionManager';
 export * from './types';

@@ -2,7 +2,7 @@ import * as vscode from "vscode"
 import markdownit from "markdown-it"
 import { streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
-import { makeServerRouter, ServerRouter, Message, Server, MessagePipe } from "spellbound-shared"
+import { makeServerRouter, ServerRouter, Message, Server, MessagePipe, makeClient, ClientRouter } from "spellbound-shared"
 
 import YAML from "yaml"
 import { AnyToolInterface } from "../tools/AnyToolInterface"
@@ -29,9 +29,15 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getChatboxHtml()
 
+    const clientPipe = new MessagePipe(
+      (message: any) => webviewView.webview.postMessage(message),
+    )
+
+    const client = makeClient<ClientRouter>(clientPipe)
+
     const serverRouter = makeServerRouter({
       submit: async (messages: Message[]) => {
-        this.handleSendPrompt(webviewView, messages)
+        this.handleSendPrompt(client, messages)
       },
     })
 
@@ -44,11 +50,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     })
 
     webviewView.webview.onDidReceiveMessage(async (message) => {
+      await clientPipe.receive(message)
       await serverPipe.receive(message)
     })
   }
 
-  async handleSendPrompt(webviewView: vscode.WebviewView, messages: Message[]) {
+  async handleSendPrompt(client: ReturnType<typeof makeClient<ClientRouter>>, messages: Message[]) {
     const filledPrompt = await fillPrompt({
       task: messages[0].content,
     })
@@ -63,10 +70,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     ]
 
     const onStart = () => {
-      webviewView.webview.postMessage({
-        command: "sendMessage",
-        message: { content: "", type: "start" },
-      })
+      client.startMessage.query()
     }
 
     let buffer = ""
@@ -74,35 +78,19 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     const onData = (output: string) => {
       buffer += output
       const rendered = this.md.render(buffer)
-      webviewView.webview.postMessage({
-        command: "sendMessage",
-        message: { content: output, rendered, type: "chunk" },
-      })
+      client.updateMessage.query(output)
     }
 
     const onEnd = () => {
-      webviewView.webview.postMessage({
-        command: "sendMessage",
-        message: { content: "", type: "done" },
-      })
+      client.finishMessage.query()
 
       // At this point, we may determine if the LLM used a tool or not. If so,
       // we should execute that tool and send the result as a message.
-      this.handleToolMessage(webviewView, {
+      this.handleToolMessage(client, {
         role: "assistant",
         content: buffer,
       })
     }
-
-    // Update the chat UI with the user's prompt
-    webviewView.webview.postMessage({
-      command: "sendMessage",
-      message: {
-        content: messages[messages.length - 1].content,
-        type: "input",
-        rendered: this.md.render(messages[messages.length - 1].content),
-      },
-    })
 
     onStart()
 
@@ -114,7 +102,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async handleToolMessage(
-    webviewView: vscode.WebviewView,
+    client: ReturnType<typeof makeClient<ClientRouter>>,
     message: Message
   ) {
     const actionRegex = /## Action\n+```.*\n([^]+)```/g
@@ -133,13 +121,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
           const toolResultOutput = `## Result\n\`\`\`\n${toolResult}\n\`\`\``
 
           // Send the tool result as a message
-          webviewView.webview.postMessage({
-            command: "sendMessage",
-            message: {
-              content: toolResultOutput,
-              type: "tool-result",
-            },
-          })
+          client.toolResult.query(toolResultOutput)
         }
       } catch (err: any) {
         console.error("FULL_MESSAGE", message.content)
@@ -148,13 +130,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
         const errorMessage = `ERROR: Could not parse tool action: ${err?.message}`
 
-        webviewView.webview.postMessage({
-          command: "sendMessage",
-          message: {
-            content: errorMessage,
-            type: "tool-result",
-          },
-        })
+        client.toolResult.query(errorMessage)
       }
     } else {
       console.error("No tool action found in message:\n\n", message.content)

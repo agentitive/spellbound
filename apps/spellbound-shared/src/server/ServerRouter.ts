@@ -1,7 +1,10 @@
 import { initTRPC } from '@trpc/server';
 import { Message } from '../types';
  
-const t = initTRPC.create();
+const t = initTRPC.create({
+    isServer: true,
+    allowOutsideOfServer: true,
+});
  
 export type ServerHandlers = {
     submit: (messages: Message[]) => Promise<void>;

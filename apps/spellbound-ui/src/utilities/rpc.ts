@@ -2,14 +2,17 @@ import { useEffect } from "react";
 
 import { vscode } from "./vscode";
 import useStore from "../store";
-import { makeClient } from "./trpc";
+
+import { MessagePipe, Server, makeClientRouter, makeClient, ServerRouter } from "spellbound-shared";
 
 console.log(`Creating TRPC server client...`);
-export const client = makeClient()
-
+const clientPipe = new MessagePipe(
+    async (message) => vscode.postMessage(message)
+)
+export const client = makeClient<ServerRouter>(clientPipe)
 
 export const useRpc = () => {
-    const { isThinking, setIsThinking, messages, addMessage, updateMessage } =
+    const { setIsThinking, messages, addMessage, updateMessage } =
 
         useStore(state => ({
             isThinking: state.isThinking,
@@ -19,48 +22,49 @@ export const useRpc = () => {
             updateMessage: state.updateMessage
         }));
 
-    const handleMessage = (event: MessageEvent) => {
-        const message = event.data; // The JSON data our extension sent
-        switch (message.command) {
-            case 'sendMessage':
-                switch (message.message.type) {
-                    case 'start':
-                        setIsThinking(true);
-                        addMessage({
-                            role: 'assistant',
-                            content: ''
-                        });
-                        break;
-                    case 'chunk':
-                        const lastMessage = messages[messages.length - 1];
-                        const oldContent = lastMessage.content;
-                        const newContent = message.message.content;
-                        updateMessage(messages.length - 1, oldContent + newContent)
-                        break;
-                    case 'done':
-                        setIsThinking(false);
-                        break;
-                    case 'input':
-                        addMessage({
-                            role: 'user',
-                            content: message.message.content
-
-                        });
-                        break;
-                    case 'tool-result':
-                        vscode.postMessage({
-                            command: "sendPrompt",
-                            messages: [...messages, { role: "system", content: message.message.content }]
-                        })
-                        break;
-                }
-                break;
-        }
-    }
-
     useEffect(() => {
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
+        const clientRouter = makeClientRouter({
+            startMessage: async () => {
+                setIsThinking(true);
+                addMessage({
+                    role: 'assistant',
+                    content: ''
+                });
+            },
+            updateMessage: async (content) => {
+                const lastMessage = messages[messages.length - 1];
+                const oldContent = lastMessage.content;
+                updateMessage(messages.length - 1, oldContent + content)
+            },
+            finishMessage: async () => {
+                setIsThinking(false);
+            },
+            toolResult: async (content) => {
+                addMessage({
+                    role: 'system',
+                    content
+                })
+            },
+        })
+
+        const serverPipe = new MessagePipe(
+            async (message) => vscode.postMessage(message),
+        )
+
+        const server = new Server(serverPipe, {
+            router: clientRouter,
+        })
+
+        const onMessage = (message: any) => {
+            serverPipe.receive(message.data)
+            clientPipe.receive(message.data)
+
+        }
+        window.addEventListener('message', onMessage);
+
+        return () => {
+            window.removeEventListener('message', onMessage);
+        }
     }, [messages]);
 
 }
