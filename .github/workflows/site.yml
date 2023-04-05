@@ -16,10 +16,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: yarn
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm i -g rush pnpm && rush update
+        run: pnpm i -g rush && rush update
       - name: Build website
         run: rush build --to agentitive-website
 
