@@ -52,8 +52,6 @@ importers:
 
   ../../apps/spellbound-shared:
     specifiers:
-      '@trpc/client': ^10.18.0
-      '@trpc/server': ~10.18.0
       '@types/node': ~18.15.11
       '@types/vscode': ~1.77.0
       '@types/vscode-webview': ^1.57.0
@@ -62,8 +60,6 @@ importers:
       typescript: ~5.0.3
       zustand: ^4.1.4
     dependencies:
-      '@trpc/client': 10.18.0_@trpc+server@10.18.0
-      '@trpc/server': 10.18.0
       birpc: 0.2.10
       zustand: 4.3.7
     devDependencies:
@@ -78,7 +74,6 @@ importers:
       '@fortawesome/fontawesome-svg-core': ~6.4.0
       '@fortawesome/free-solid-svg-icons': ~6.4.0
       '@fortawesome/react-fontawesome': ~0.2.0
-      '@trpc/client': ^10.18.0
       '@trpc/server': ~10.18.0
       '@types/node': ~18.15.11
       '@types/react': ^17.0.37
@@ -105,7 +100,6 @@ importers:
       '@fortawesome/fontawesome-svg-core': 6.4.0
       '@fortawesome/free-solid-svg-icons': 6.4.0
       '@fortawesome/react-fontawesome': 0.2.0_cd264d80646e036b39bccbdbe165556d
-      '@trpc/client': 10.18.0_@trpc+server@10.18.0
       '@vscode/webview-ui-toolkit': 1.2.2_react@17.0.2
       birpc: 0.2.10
       react: 17.0.2
@@ -3010,16 +3004,9 @@ packages:
     engines: {node: '>= 10'}
     dev: false
 
-  /@trpc/client/10.18.0_@trpc+server@10.18.0:
-    resolution: {integrity: sha512-2d+6r2C/xygTjDWX9jT66defgHzbQP0Z8vrvyT3XtPjqU6JNlRNuS2ZtB8xDPdOQUUVnndzZ43BMr+Zu49K0OQ==}
-    peerDependencies:
-      '@trpc/server': 10.18.0
-    dependencies:
-      '@trpc/server': 10.18.0
-    dev: false
-
   /@trpc/server/10.18.0:
     resolution: {integrity: sha512-nVMqdDIF9YLOeC3g6RdAvdCPqkHFjpshSqZGThZ+fyjiWSUXj2ZKCduhJFnY77TjtgODojeaaghmzcnjxb+Onw==}
+    dev: true
 
   /@trysound/sax/0.2.0:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
