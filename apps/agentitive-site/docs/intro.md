@@ -59,7 +59,7 @@ The following tools are available for use in Spellbound. The underlying AI model
 
 ## Local Development
 
-To set up the local development environment for the Spellbound extension, see the [LOCAL_SETUP.md](LOCAL_SETUP.md) file.
+To set up the local development environment for the Spellbound extension, see the [local development docs](local_dev.md) file.
 
 ## License
 
