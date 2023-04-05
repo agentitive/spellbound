@@ -18,10 +18,10 @@ jobs:
           node-version: 18
           cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm i -g rush && rush update
+      - name: Rush Install
+        run: node common/scripts/install-run-rush.js install
       - name: Build website
-        run: rush build --to agentitive-website
+        run: node common/scripts/install-run-rush.js build --to agentitive-website
 
       # Popular action to deploy to GitHub Pages:
       # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
