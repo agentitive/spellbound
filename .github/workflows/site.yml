@@ -1,5 +1,7 @@
 name: Deploy to GitHub Pages
 
+permissions: read-all|write-all
+
 on:
   push:
     branches:
