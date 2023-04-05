@@ -73,10 +73,10 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
       // At this point, we may determine if the LLM used a tool or not. If so,
       // we should execute that tool and send the result as a message.
-      this.handleToolMessage(rpc, {
+      this.handleToolMessage(rpc, [...messages, {
         role: "assistant",
         content: buffer,
-      })
+      }])
     }
 
     onStart()
@@ -90,10 +90,11 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
   private async handleToolMessage(
     rpc: BirpcReturn<WebviewProcedures, {}>,
-    message: Message
+    messages: Message[]
   ) {
+    const lastMessage = messages[messages.length - 1]
     const actionRegex = /## Action\n+```.*\n([^]+)```/g
-    const match = actionRegex.exec(message.content)
+    const match = actionRegex.exec(lastMessage.content)
 
     if (match) {
       try {
@@ -109,9 +110,16 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
           // Send the tool result as a message
           await rpc.result(toolResultOutput)
+
+          const resultMessage = {
+            role: "assistant",
+            content: toolResultOutput,
+          }
+
+          await this.handleSendPrompt(rpc, [...messages, resultMessage])
         }
       } catch (err: any) {
-        console.error("FULL_MESSAGE", message.content)
+        console.error("FULL_MESSAGE", lastMessage.content)
         console.error("REGEX_MATCH", match[1])
         console.error("Error parsing tool action:", err)
 
@@ -120,7 +128,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         await rpc.result(errorMessage)        
       }
     } else {
-      console.error("No tool action found in message:\n\n", message.content)
+      console.error("No tool action found in message:\n\n", lastMessage.content)
     }
   }
 
