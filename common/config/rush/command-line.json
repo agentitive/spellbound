@@ -19,7 +19,7 @@
       "allowWarningsInSuccessfulBuild": true
     },
     {
-      "name": "build:watch",
+      "name": "watch",
       "commandKind": "bulk",
       "summary": "Build projects and watch for changes",
       "description": "Build all projects that haven't been built, or have changed since they were last built.  Watch for changes and rebuild as needed.",
