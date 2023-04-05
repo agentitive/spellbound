@@ -1,3 +1,3 @@
-export * from './createBirpc';
+export * from './birpc';
 export * from './extension';
 export * from './webview';
