@@ -45,7 +45,7 @@
         },
         "spellbound.pinecone_index": {
           "type": "string",
-          "default": "",
+          "default": "spellbound",
           "description": "Enter your Pinecone index name here, used for search."
         },
         "spellbound.pinecone_environment": {
