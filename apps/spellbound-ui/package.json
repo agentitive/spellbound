@@ -22,7 +22,8 @@
         "styled-components": "~5.3.9",
         "zustand": "^4.1.4",
         "spellbound-shared": "workspace:^0.0.3",
-        "birpc": "~0.2.10"
+        "birpc": "~0.2.10",
+        "react-autosize-textarea": "~7.1.0"
     },
     "devDependencies": {
         "@trpc/server": "~10.18.0",

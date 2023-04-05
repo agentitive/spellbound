@@ -5,16 +5,18 @@
     padding: 8px;
     display: flex;
 
-    & > input {
-        flex-grow: 1;
-        outline: none;
-        border: none;
-        border-radius: 2px;
-        padding: 6px;
-        font-size: 14px;
-        color: #CCC;
-        background-color: #0e1116;
-    }
+    & > textarea {
+      flex-grow: 1;
+      outline: none;
+      border: none;
+      border-radius: 2px;
+      padding: 6px;
+      font-size: 14px;
+      color: #CCC;
+      background-color: #0e1116;
+      resize: none;
+      font: inherit;
+  }
 
     & > input:focus {
         border: 1px solid #007fd4;
