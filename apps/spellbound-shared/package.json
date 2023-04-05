@@ -18,9 +18,7 @@
     "@types/vscode-webview": "^1.57.0"
   },
   "dependencies": {
-    "@trpc/server": "~10.18.0",
     "zustand": "^4.1.4",
-    "@trpc/client": "^10.18.0",
     "birpc": "~0.2.10"
   }
 }
