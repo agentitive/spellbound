@@ -2,18 +2,16 @@ import * as vscode from "vscode"
 import markdownit from "markdown-it"
 import { streamInference } from "../api/openai"
 import { fillPrompt } from "../prompts/fillPrompt"
-import { makeServerRouter, ServerRouter, Message, Server, MessagePipe, makeClient, ClientRouter } from "spellbound-shared"
 
 import YAML from "yaml"
 import { AnyToolInterface } from "../tools/AnyToolInterface"
 import { ToolEngine } from "../tools/ToolEngine"
 import { readFileSync } from "fs"
+import { BirpcReturn, Message, WebviewProcedures, createBirpc, makeExtensionRpc } from "spellbound-shared"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
-  server: Server<ServerRouter> | null
-
   constructor(private readonly extensionUri: vscode.Uri) {
-    this.server = null
+
   }
 
   private md = markdownit({
@@ -29,33 +27,23 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getChatboxHtml()
 
-    const clientPipe = new MessagePipe(
-      (message: any) => webviewView.webview.postMessage(message),
-    )
-
-    const client = makeClient<ClientRouter>(clientPipe)
-
-    const serverRouter = makeServerRouter({
+    const rpc = createBirpc<WebviewProcedures>({
       submit: async (messages: Message[]) => {
-        this.handleSendPrompt(client, messages)
+        return this.handleSendPrompt(rpc, messages)
+      }
+    }, {
+      post: data => {
+        webviewView.webview.postMessage(data)
       },
-    })
-
-    const serverPipe = new MessagePipe(
-      (message: any) => webviewView.webview.postMessage(message),
-    )
-
-    const server = new Server(serverPipe, {
-      router: serverRouter,
-    })
-
-    webviewView.webview.onDidReceiveMessage(async (message) => {
-      await clientPipe.receive(message)
-      await serverPipe.receive(message)
+      on: data => {
+        webviewView.webview.onDidReceiveMessage(e => {
+          data(e)
+        })
+      }
     })
   }
 
-  async handleSendPrompt(client: ReturnType<typeof makeClient<ClientRouter>>, messages: Message[]) {
+  async handleSendPrompt(rpc: BirpcReturn<WebviewProcedures, {}>, messages: Message[]) {
     const filledPrompt = await fillPrompt({
       task: messages[0].content,
     })
@@ -69,24 +57,23 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       ...messages.slice(1),
     ]
 
-    const onStart = () => {
-      client.startMessage.query()
+    const onStart = async () => {
+      await rpc.start()
     }
 
     let buffer = ""
 
-    const onData = (output: string) => {
+    const onData = async (output: string) => {
       buffer += output
-      const rendered = this.md.render(buffer)
-      client.updateMessage.query(output)
+      await rpc.update(output)
     }
 
-    const onEnd = () => {
-      client.finishMessage.query()
+    const onEnd = async () => {
+      await rpc.finish()
 
       // At this point, we may determine if the LLM used a tool or not. If so,
       // we should execute that tool and send the result as a message.
-      this.handleToolMessage(client, {
+      this.handleToolMessage(rpc, {
         role: "assistant",
         content: buffer,
       })
@@ -102,7 +89,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async handleToolMessage(
-    client: ReturnType<typeof makeClient<ClientRouter>>,
+    rpc: BirpcReturn<WebviewProcedures, {}>,
     message: Message
   ) {
     const actionRegex = /## Action\n+```.*\n([^]+)```/g
@@ -121,7 +108,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
           const toolResultOutput = `## Result\n\`\`\`\n${toolResult}\n\`\`\``
 
           // Send the tool result as a message
-          client.toolResult.query(toolResultOutput)
+          await rpc.result(toolResultOutput)
         }
       } catch (err: any) {
         console.error("FULL_MESSAGE", message.content)
@@ -130,7 +117,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
         const errorMessage = `ERROR: Could not parse tool action: ${err?.message}`
 
-        client.toolResult.query(errorMessage)
+        await rpc.result(errorMessage)        
       }
     } else {
       console.error("No tool action found in message:\n\n", message.content)
@@ -192,7 +179,9 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       </head>
       <body>
         <div id="root"></div>
-        <script>${scriptText}</script>
+        <script>
+          ${scriptText}
+        </script>
       </body>
       </html>
     `

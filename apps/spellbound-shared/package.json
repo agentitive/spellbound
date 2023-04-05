@@ -14,11 +14,13 @@
     "node-rig": "workspace:^0.0.1",
     "typescript": "~5.0.3",
     "@types/node": "~18.15.11",
-    "@types/vscode": "~1.77.0"
+    "@types/vscode": "~1.77.0",
+    "@types/vscode-webview": "^1.57.0"
   },
   "dependencies": {
     "@trpc/server": "~10.18.0",
     "zustand": "^4.1.4",
-    "@trpc/client": "^10.18.0"
+    "@trpc/client": "^10.18.0",
+    "birpc": "~0.2.10"
   }
 }

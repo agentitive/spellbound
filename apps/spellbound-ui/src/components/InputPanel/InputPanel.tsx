@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import styles from "./styles.module.scss"
 
-import { client } from "../../utilities/rpc";
+import { rpc } from "../../utilities/rpc";
 import useStore from "../../store";
 
 export function InputPanel() {
@@ -13,13 +13,14 @@ export function InputPanel() {
   }))
   const [input, setInput] = useState("");
 
-  const onClick = () => {
+  const onClick = async () => {
     const prompt = input.trim()
     if (prompt) {
       const newMessage = { role: "system", content: prompt }
       addMessage(newMessage)
       const newMessages = [...messages, newMessage]
-      client.submit.query(newMessages)
+      console.log("submitting new messages...")
+      await rpc.submit(newMessages)
       setInput("")
     }
   }

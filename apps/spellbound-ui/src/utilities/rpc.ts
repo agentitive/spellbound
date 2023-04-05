@@ -1,70 +1,40 @@
-import { useEffect } from "react";
-
 import { vscode } from "./vscode";
 import useStore from "../store";
+import { makeWebviewRpc } from "spellbound-shared";
 
-import { MessagePipe, Server, makeClientRouter, makeClient, ServerRouter } from "spellbound-shared";
-
-console.log(`Creating TRPC server client...`);
-const clientPipe = new MessagePipe(
-    async (message) => vscode.postMessage(message)
-)
-export const client = makeClient<ServerRouter>(clientPipe)
-
-export const useRpc = () => {
-    const { setIsThinking, messages, addMessage, updateMessage } =
-
-        useStore(state => ({
-            isThinking: state.isThinking,
-            setIsThinking: state.setIsThinking,
-            messages: state.messages,
-            addMessage: state.addMessage,
-            updateMessage: state.updateMessage
-        }));
-
-    useEffect(() => {
-        const clientRouter = makeClientRouter({
-            startMessage: async () => {
-                setIsThinking(true);
-                addMessage({
-                    role: 'assistant',
-                    content: ''
-                });
-            },
-            updateMessage: async (content) => {
-                const lastMessage = messages[messages.length - 1];
-                const oldContent = lastMessage.content;
-                updateMessage(messages.length - 1, oldContent + content)
-            },
-            finishMessage: async () => {
-                setIsThinking(false);
-            },
-            toolResult: async (content) => {
-                addMessage({
-                    role: 'system',
-                    content
-                })
-            },
+export const rpc = makeWebviewRpc({
+    post: data => {
+        vscode.postMessage(data)
+    },
+    on: cb => {
+        window.addEventListener('message', event => {
+            cb(event.data)
         })
+    }
+},{
+    start: async () => {
+        const { setIsThinking, addMessage } = useStore.getState();
 
-        const serverPipe = new MessagePipe(
-            async (message) => vscode.postMessage(message),
-        )
-
-        const server = new Server(serverPipe, {
-            router: clientRouter,
+        setIsThinking(true);
+        addMessage({
+            role: 'assistant',
+            content: ''
+        });
+    },
+    update: async (message: string) => {
+        const { messages, updateMessage } = useStore.getState();
+        const lastMessage = messages[messages.length - 1];
+        updateMessage(messages.length - 1, lastMessage.content + message)
+    },
+    finish: async () => {
+        const { setIsThinking } = useStore.getState();
+        setIsThinking(false);
+    },
+    result: async (message: string) => {
+        const { addMessage } = useStore.getState();
+        addMessage({
+            role: 'system',
+            content: message
         })
-
-        const onMessage = (message: any) => {
-            serverPipe.receive(message.data)
-            clientPipe.receive(message.data)
-
-        }
-        window.addEventListener('message', onMessage);
-
-        return () => {
-            window.removeEventListener('message', onMessage);
-        }
-    }, [messages]);
-
-}
+    },
+})
