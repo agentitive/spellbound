@@ -36,26 +36,22 @@
         "spellbound.openai_api_key": {
           "type": "string",
           "default": "",
-          "description": "Enter your OpenAI API key here, used for inference.",
-          "scope": "machine"
+          "description": "Enter your OpenAI API key here, used for inference."
         },
         "spellbound.pinecone_api_key": {
           "type": "string",
           "default": "",
-          "description": "Enter your Pinecone API key here, used for search.",
-          "scope": "machine"
+          "description": "Enter your Pinecone API key here, used for search."
         },
         "spellbound.pinecone_index": {
           "type": "string",
           "default": "",
-          "description": "Enter your Pinecone index name here, used for search.",
-          "scope": "application"
+          "description": "Enter your Pinecone index name here, used for search."
         },
         "spellbound.pinecone_environment": {
           "type": "string",
           "default": "",
-          "description": "Enter your Pinecone environment here, used for search.",
-          "scope": "application"
+          "description": "Enter your Pinecone environment here, used for search."
         },
         "spellbound.model": {
           "type": "string",
