@@ -10,6 +10,6 @@ export async function readGitIgnore(
     const gitignoreContent = await fs.readFile(gitignorePath, "utf8")
     return gitignoreContent.split(/\r?\n/)
   } catch (err) {
-    return `ERROR: Failed to read .gitignore file: ${err}`
+    return []
   }
 }
