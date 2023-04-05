@@ -40,7 +40,7 @@ npm install -g @microsoft/rush pnpm
 4. Compile the projects:
 
    ```
-   rush build
+   rush watch
    ```
 
 5. Open the project folder in Visual Studio Code:
