@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AutosizeTextArea from "react-autosize-textarea";
 
 import styles from "./styles.module.scss"
 
@@ -6,7 +7,7 @@ import { rpc } from "../../utilities/rpc";
 import useStore from "../../store";
 
 export function InputPanel() {
-  const { addMessage, messages, isThinking } = useStore(state => ({ 
+  const { addMessage, messages, isThinking } = useStore(state => ({
     addMessage: state.addMessage,
     messages: state.messages,
     isThinking: state.isThinking
@@ -34,15 +35,14 @@ export function InputPanel() {
 
   return (
     <div className={styles.inputPanel}>
-      <input
-        type="text"
-        value={input}
-        disabled={isThinking}
-        placeholder="Message (Enter to send)"
-        onKeyDown={onKeyDown}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <button 
+      <AutosizeTextArea
+         value={input}
+         disabled={isThinking}
+         placeholder="Message (Enter to send)"
+         onKeyDown={onKeyDown}
+         onChange={(e: React.FormEvent<HTMLTextAreaElement>) => setInput(e.currentTarget.value)}
+       />
+      <button
         onClick={onClick}
         disabled={isThinking}
       >Send</button>
