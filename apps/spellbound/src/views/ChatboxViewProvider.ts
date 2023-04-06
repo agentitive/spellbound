@@ -5,7 +5,7 @@ import { Message, WebviewProcedures, createBirpc } from "spellbound-shared"
 import { AgentLogicHandler } from "../agent/AgentLogicHandler"
 
 export class ChatboxViewProvider implements vscode.WebviewViewProvider {
-  constructor(private readonly extensionUri: vscode.Uri) {}
+  constructor(private readonly extensionUri: vscode.Uri) { }
 
   private md = markdownit({
     html: true,
@@ -24,6 +24,25 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
       submit: async (messages: Message[]) => {
         const agentLogicHandler = new AgentLogicHandler(rpc)
         return await agentLogicHandler.handleSendPrompt(messages)
+      },
+      saveToFile: async (messages: Message[]) => {
+        try {
+          const saveUri = await vscode.window.showSaveDialog({
+            filters: {
+              "JSON Files": ["json"]
+            },
+            saveLabel: "Save Chat Messages",
+            title: "Save Chat Messages As"
+          })
+
+          if (saveUri) {
+            await vscode.workspace.fs.writeFile(saveUri, Buffer.from(JSON.stringify(messages, null, 2)))
+            vscode.window.showInformationMessage("Chat messages saved successfully.")
+          }
+        } catch (error) {
+          vscode.window.showErrorMessage(`Error saving file: ${(error as Error).message}`)
+        }
+        console.log("attempting to write: ", messages)
       }
     }, {
       post: data => {
