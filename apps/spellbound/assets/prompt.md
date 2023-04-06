@@ -33,7 +33,7 @@ Use the following tools:
 | npm {script}             | Run an npm script (e.g., `npm run [script]`).                                                                  |
 | git {args}               | Run an git command with optional arguments.                                                                    |
 | done {output?}           | Indicate that you are done with the task.                                                                      |
-| diff {source, patchStr}    | Apply a given diff patch to a source file and return the patched content. |
+| diff {source, patchStr}  | For *modifying* files. Takes filename and unified diff patch string.                                           |
 
 Here is an example message that uses the `search` tool:
 
