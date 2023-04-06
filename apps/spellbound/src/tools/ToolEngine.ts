@@ -3,6 +3,7 @@ import { catToolImpl } from "./cat/catToolImpl"
 import { doneToolImpl } from "./done/doneToolImpl"
 import { lsToolImpl } from "./ls/lsToolImpl"
 import { npmToolImpl } from "./npm/npmToolImpl"
+import { gitToolImpl } from "./git/gitToolImpl"
 import { replaceToolImpl } from "./replace/replaceToolImpl"
 import { searchToolImpl } from "./search/searchToolImpl"
 import { statsToolImpl } from "./stats/statsToolImpl"
@@ -14,6 +15,7 @@ export const ToolEngine = {
   done: doneToolImpl,
   ls: lsToolImpl,
   npm: npmToolImpl,
+  git: gitToolImpl,
   replace: replaceToolImpl,
   search: searchToolImpl,
   stats: statsToolImpl,

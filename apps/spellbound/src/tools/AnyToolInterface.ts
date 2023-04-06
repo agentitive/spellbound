@@ -7,6 +7,7 @@ import { AskToolInterface } from "./ask/AskToolInterface"
 import { NpmToolInterface } from "./npm/NpmToolInterface"
 import { DoneToolInterface } from "./done/DoneToolInterface"
 import { StatsToolInterface } from "./stats/StatsToolInterface"
+import { GitToolInterface } from "./git/GitToolInterface"
 
 export type AnyToolInterface =
   | CatToolInterface
@@ -16,5 +17,6 @@ export type AnyToolInterface =
   | ReplaceToolInterface
   | AskToolInterface
   | NpmToolInterface
+  | GitToolInterface
   | DoneToolInterface
   | StatsToolInterface

@@ -31,6 +31,7 @@ Use the following tools:
 | replace {path, old, new} | Replace all occurrences of `old` with `new` in the specified file. Useful for quick edits.                     |
 | ask {question}           | Ask a question to the user.                                                                                    |
 | npm {script}             | Run an npm script (e.g., `npm run [script]`).                                                                  |
+| git {args}               | Run an git command with optional arguments.                                                                    |
 | done {output?}           | Indicate that you are done with the task.                                                                      |
 
 Here is an example message that uses the `search` tool:
