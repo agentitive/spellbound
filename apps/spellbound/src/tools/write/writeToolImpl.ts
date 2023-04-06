@@ -1,7 +1,8 @@
 import { promises as fs } from "fs"
+import { mkdirSync } from "fs"
 import path from "path"
 import * as vscode from "vscode"
-import { WriteToolInterface } from "./WriteToolInterface"
+import { WriteTool "./WriteToolInterface"
 
 export async function writeToolImpl(
   params: WriteToolInterface
@@ -18,6 +19,8 @@ export async function writeToolImpl(
 
   try {
     const absoluteFilePath = path.join(workspacePath, filePath)
+    const fileDirectory = path.dirname(absoluteFilePath)
+    mkdirSync(fileDirectory, { recursive: true })
 
     await fs.writeFile(absoluteFilePath, contents, "utf8")
 
