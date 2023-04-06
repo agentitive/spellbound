@@ -57,6 +57,11 @@
           "type": "string",
           "default": "gpt-4",
           "description": "Select the AI model used by the Spellbound extension."
+        },
+        "spellbound.agent.stopOnError": {
+          "type": "boolean",
+          "default": "true",
+          "description": "Does the AI stop when it encounters an error?"
         }
       }
     },

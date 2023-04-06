@@ -1,12 +1,14 @@
-import { BirpcReturn, Message, WebviewProcedures } from "spellbound-shared"
-import { fillPrompt } from "../prompts/fillPrompt"
-import { streamInference } from "../api/openai"
-import YAML from "yaml"
-import { AnyToolInterface } from "../tools/AnyToolInterface"
-import { ToolEngine } from "../tools/ToolEngine"
+import * as vscode from 'vscode'
+
+import { BirpcReturn, Message, WebviewProcedures } from 'spellbound-shared'
+import { fillPrompt } from '../prompts/fillPrompt'
+import { streamInference } from '../api/openai'
+import YAML from 'yaml'
+import { AnyToolInterface } from '../tools/AnyToolInterface'
+import { ToolEngine } from '../tools/ToolEngine'
 
 export class AgentLogicHandler {
-  constructor(private readonly rpc: BirpcReturn<WebviewProcedures, {}>) {}
+  constructor(private readonly rpc: BirpcReturn<WebviewProcedures, {}>) { }
 
   async handleSendPrompt(messages: Message[]) {
     const updatedMessages = await this.createUpdatedMessages(messages)
@@ -15,7 +17,7 @@ export class AgentLogicHandler {
       await this.onStartHandler()
     }
 
-    let buffer = ""
+    let buffer = ''
 
     const onData = async (output: string) => {
       buffer = await this.onDataHandler(buffer, output)
@@ -61,7 +63,7 @@ export class AgentLogicHandler {
     await this.rpc.finish()
 
     this.handleToolMessage([...messages, {
-      role: "assistant",
+      role: 'assistant',
       content: buffer,
     }])
   }
@@ -76,24 +78,32 @@ export class AgentLogicHandler {
         await this.handleSendPrompt([...messages, resultMessage])
       }
     } else {
-      console.error("No tool action found in message:\n\n", messages[messages.length - 1].content)
+      console.error('No tool action found in message:\n\n', messages[messages.length - 1].content)
     }
   }
 
   private async extractActionObject(messages: Message[]) {
     const lastMessage = messages[messages.length - 1]
-    const actionRegex = /## Action\n+```.*\n([^]+)```/g
+    const actionRegex = /^\s*##\s*Action\s*\n+```[\s\S]*?\n([^]+?)```/gm
     const match = actionRegex.exec(lastMessage.content)
 
     if (match) {
       try {
         return YAML.parse(match[1], { strict: false })
       } catch (err: any) {
-        console.error("FULL_MESSAGE", lastMessage.content)
-        console.error("REGEX_MATCH", match[1])
-        console.error("Error parsing tool action:", err)
+        console.error('FULL_MESSAGE', lastMessage.content)
+        console.error('REGEX_MATCH', match[1])
+        console.error('Error parsing tool action:', err)
+        // get the extension setting .agent.stopOnError
         const errorMessage = `ERROR: Could not parse tool action: ${err?.message}`
-        await this.rpc.result(errorMessage)
+
+        const stopOnError = vscode.workspace.getConfiguration('spellbound').get('agent.stopOnError')
+        if (stopOnError) {
+          return await this.rpc.result(errorMessage)
+        }
+
+        const resultMessage = await this.createResultMessage(errorMessage)
+        await this.handleSendPrompt([...messages, resultMessage])
       }
     }
     return null
@@ -103,7 +113,7 @@ export class AgentLogicHandler {
     const toolResultOutput = `## Result\n\`\`\`\n${toolResult}\n\`\`\``
     await this.rpc.result(toolResultOutput)
     return {
-      role: "assistant",
+      role: 'assistant',
       content: toolResultOutput,
     }
   }
