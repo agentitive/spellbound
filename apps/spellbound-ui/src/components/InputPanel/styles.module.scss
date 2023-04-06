@@ -16,14 +16,13 @@
       background-color: #0e1116;
       resize: none;
       font: inherit;
-  }
+    }
 
     & > input:focus {
         border: 1px solid #007fd4;
     }
 
     & > button {
-        background-color: #438440;
         border: none;
         color: white;
         padding: 6px 12px;
@@ -34,7 +33,24 @@
         outline: none;
     }
 
-    & > button:hover {
+    & > .send {
+        background-color: #438440;
+    }
+
+    & > .send:hover {
         background-color: #488848;
+    }
+
+    & > .export {
+        background-color: #000000;
+    }
+
+    & > .export:hover {
+        background-color: #111111;
+    }
+
+    & > button:disabled {
+        background-color: #666;
+        cursor: not-allowed;
     }
 }

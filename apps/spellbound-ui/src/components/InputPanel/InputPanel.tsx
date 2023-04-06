@@ -47,13 +47,15 @@ export function InputPanel() {
         onChange={(e: React.FormEvent<HTMLTextAreaElement>) => setInput(e.currentTarget.value)}
       />
       <button
+        className={styles.send}
         onClick={onClick}
         disabled={isThinking}
       >Send</button>
       <button
+        className={styles.export}
         onClick={saveToFile}
         disabled={isThinking}
-      >Save to file</button>
+      >Export</button>
     </div>
   );
 }
