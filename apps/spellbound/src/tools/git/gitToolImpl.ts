@@ -1,6 +1,7 @@
 import { GitToolInterface } from "./GitToolInterface"
 import * as vscode from "vscode"
 import { execSync } from "child_process"
+import { runGitCommand } from "./utility/runGitCommand"
 
 export async function gitToolImpl(params: GitToolInterface): Promise<string> {
   const { args } = params
@@ -12,12 +13,7 @@ export async function gitToolImpl(params: GitToolInterface): Promise<string> {
   }
 
   try {
-    debugger
-    const result = execSync(`git ${args}`, {
-      cwd: workspacePath,
-    }).toString()
-
-    return result
+    return await runGitCommand(args)
   } catch (err: any) {
     return `ERROR: Failed to execute git command: ${err?.message || 'Unknown error'}`
   }
