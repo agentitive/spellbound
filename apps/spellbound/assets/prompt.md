@@ -28,7 +28,6 @@ Use the following tools:
 | stats                    | List available vector embedding namespaces                                                                     |
 | {globs, regex}      | Perform a grep search with the specified list of glob patterns and a regex query.                              |
 | write {path, contents}   | Write (or overwrite) the given contents into the specified file. Takes a long time to execute for large files. |
-| replace {path, old, new} | Replace all occurrences of `old` with `new` in the specified file. Useful for quick edits.                     |
 | ask {question}           | Ask a question to the user.                                                                                    |
 | npm {script}             | Run an npm script (e.g., `npm run [script]`).                                                                  |
 | git {args}               | Run an git command with optional arguments. End your commit messages with "(By SB)"                            |
