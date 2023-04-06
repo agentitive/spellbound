@@ -15,10 +15,11 @@ export async function grepToolImpl(params: GrepToolInterface) {
   const { globs, regex } = params
   const cwd = vscode.workspace.workspaceFolders?.[0].uri.fsPath || process.cwd()
   const regexp = new RegExp(regex)
-  const files = await globby(globs, { cwd })
+  const files = (await globby(globs, { cwd }))
+    .filter(file => !file.includes("node_modules"))
   const results: Record<string, GrepResult[]> = {}
 
-  for (const file of files) {
+  for (const file of files.slice(0, 10)) {
     const text = readFileSync(join(cwd, file), "utf8")
     const lines = text.split("\n")
     const matches = lines.map((line, lineNumber) => ({ file, line, lineNumber })).filter(({ line }) => regexp.test(line))
