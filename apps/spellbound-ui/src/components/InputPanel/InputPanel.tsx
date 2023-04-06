@@ -33,19 +33,27 @@ export function InputPanel() {
     }
   }
 
+  const saveToFile = async () => {
+    await rpc.saveToFile(messages)
+  }
+
   return (
     <div className={styles.inputPanel}>
       <AutosizeTextArea
-         value={input}
-         disabled={isThinking}
-         placeholder="Message (Enter to send)"
-         onKeyDown={onKeyDown}
-         onChange={(e: React.FormEvent<HTMLTextAreaElement>) => setInput(e.currentTarget.value)}
-       />
+        value={input}
+        disabled={isThinking}
+        placeholder="Message (Enter to send)"
+        onKeyDown={onKeyDown}
+        onChange={(e: React.FormEvent<HTMLTextAreaElement>) => setInput(e.currentTarget.value)}
+      />
       <button
         onClick={onClick}
         disabled={isThinking}
       >Send</button>
+      <button
+        onClick={saveToFile}
+        disabled={isThinking}
+      >Save to file</button>
     </div>
   );
 }
