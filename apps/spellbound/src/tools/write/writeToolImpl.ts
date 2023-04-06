@@ -1,4 +1,4 @@
-import { promises as fs, mkdirSync } from "fs"
+import { promises as fs, mkdirSync, existsSync } from "fs"
 import path from "path"
 import * as vscode from "vscode"
 import { WriteToolInterface } from "./WriteToolInterface"
@@ -16,18 +16,17 @@ export async function writeToolImpl(
     return `ERROR: No workspace folder open`
   }
 
-  const absoluteFilePath =.join(workspacePath, filePath)
+  const absoluteFilePath = path.join(workspacePath, filePath)
   const fileDirectory = path.dirname(absoluteFilePath)
 
-  if (!fs.existsSync(fileDirectory)) {
+  if (!existsSync(fileDirectory)) {
     mkdirSync(fileDirectory, { recursive: true })
   }
 
   try {
     await fs.writeFile(absoluteFilePath, contents, "utf8")
-
     return `File written to ${filePath}`
-  } (err) {
+  } catch (err) {
     return `ERROR: Failed to write file: ${filePath}`
   }
 }
