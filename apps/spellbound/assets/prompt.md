@@ -31,7 +31,7 @@ Use the following tools:
 | replace {path, old, new} | Replace all occurrences of `old` with `new` in the specified file. Useful for quick edits.                     |
 | ask {question}           | Ask a question to the user.                                                                                    |
 | npm {script}             | Run an npm script (e.g., `npm run [script]`).                                                                  |
-| git {args}               | Run an git command with optional arguments.                                                                    |
+| git {args}               | Run an git command with optional arguments. End your commit messages with "(By SB)"                            |
 | done {output?}           | Indicate that you are done with the task.                                                                      |
 | diff {source, patchStr}  | For *modifying* files. Takes filename and unified diff patch string.                                           |
 
