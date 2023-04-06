@@ -1,7 +1,8 @@
 import fs from "fs"
 import path from "path"
+import { getCurrentWorkspaceFolder } from "./getCurrentWorkspaceFolder"
 
-const IGNORED_EXTENSIONS = [
+export const IGNORED_EXTENSIONS = [
   ".png",
   ".jpg",
   ".jpeg",
@@ -41,6 +42,10 @@ export const chunkFile = (
   block_size: number,
   block_overlap: number
 ) => {
+  if (IGNORED_EXTENSIONS.includes(path.extname(filename))) {
+    return []
+  }
+
   console.log("chunking file", filename)
   const content = fs.readFileSync(filename, "utf8")
 
@@ -54,8 +59,13 @@ export const chunkFile = (
       end = content.length
     }
 
+    const relativeFilename = path.relative(
+      getCurrentWorkspaceFolder(),
+      filename
+    )
+
     chunks.push({
-      filename,
+      filename: relativeFilename,
       start,
       end,
       text: content.substring(start, end),
