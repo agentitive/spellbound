@@ -14,8 +14,14 @@ export async function diffToolImpl(params: DiffToolInterface): Promise<string> {
     const filename = path.join(workspaceRoot || "", source)
     const text = fs.readFileSync(filename, "utf8")
     const patchedText = applyPatch(text, patches[0])
-    fs.writeFileSync(filename, JSON.stringify(patchedText))
+
+    if (!patchedText) {
+      throw new Error("Failed to apply patch.")
+    }
+
+    fs.writeFileSync(filename, patchedText)
     return "Done."
+
   } catch (err: any) {
     return `ERROR: Failed to apply diff patch: ${err?.message || 'Unknown error'}`
   }
