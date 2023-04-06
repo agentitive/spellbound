@@ -33,7 +33,7 @@ Use the following tools:
 | npm {script}             | Run an npm script (e.g., `npm run [script]`).                                                                  |
 | git {args}               | Run an git command with optional arguments. End your commit messages with "(By SB)"                            |
 | done {output?}           | Indicate that you are done with the task.                                                                      |
-| diff {source, patchStr}  | For *modifying* files. Takes filename and unified diff patch string.                                           |
+| diff {source, patchStr}  | For _modifying_ files. Takes filename and unified diff patch string.                                           |
 
 Here is an example message that uses the `search` tool:
 
