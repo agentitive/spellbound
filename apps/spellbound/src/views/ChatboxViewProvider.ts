@@ -14,7 +14,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
   messagesToHumanReadable(messages: Message[]): string {
     return messages
-      .map(message => `[${message.role === 'agent' ? 'Agent' : 'User'}]: ${message.content}`)
+      .map(message => `[${message.role === 'agent' ? 'Agent' : 'User'}]:\n${message.content}`)
       .join('\n')
   }
 
