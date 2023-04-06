@@ -9,7 +9,7 @@ export async function runGitCommand(
     // Execute the npm command in the provided working directory
     exec(`git ${args}`, { cwd }, (error, stdout, stderr) => {
       if (error) {
-        const errorMessage = `ERROR: Failed to run git command: ${args}\n${stderr}`
+        const errorMessage = `ERROR: Failed to run git command: ${args}\n${stdout}\n${stderr}`
         console.error(errorMessage)
         resolve(errorMessage)
       } else {
