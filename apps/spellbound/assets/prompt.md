@@ -25,14 +25,16 @@ Use the following tools:
 | ------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | cat {path}               | Read the content of a file at the given path.                                                                  |
 | ls {path, recursive?}    | List files and folders at the given path relative to workspace root.                                           |
-| stats                    | List available vector embedding namespaces                                                                     |
-| grep {globs, regex}      | Perform a grep search with the specified list of glob patterns and a regex query.                              |
+| move {source, dest}      | Move a file or folder from source to destination. Paths relative to workspace root.                            |
 | write {path, contents}   | Write (or overwrite) the given contents into the specified file. Takes a long time to execute for large files. |
+| grep {globs, regex}      | Perform a grep search with the specified list of glob patterns and a regex query.                              |
 | ask {question}           | Ask a question to the user.                                                                                    |
 | npm {script}             | Run an npm script (e.g., `npm run [script]`).                                                                  |
 | git {args}               | Run an git command with optional arguments. End your commit messages with "(By SB)"                            |
 | done {output?}           | Indicate that you are done with the task.                                                                      |
 | diff {source, patchStr}  | For _modifying_ files. Takes filename and unified diff patch string.                                           |
+| search {topic}           | Search for a topic in the vector-embedding database.                                                           |
+| stats                    | List available vector embedding namespaces                                                                     |
 
 Here is an example message that uses the `search` tool:
 

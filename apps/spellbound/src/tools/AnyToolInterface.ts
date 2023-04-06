@@ -8,6 +8,7 @@ import { DoneToolInterface } from "./done/DoneToolInterface"
 import { StatsToolInterface } from "./stats/StatsToolInterface"
 import { GitToolInterface } from "./git/GitToolInterface"
 import { GrepToolInterface } from "./grep/GrepToolInterface"
+import { MoveToolInterface } from "./move/MoveToolInterface"
 
 export type AnyToolInterface =
   | CatToolInterface
@@ -20,3 +21,4 @@ export type AnyToolInterface =
   | GitToolInterface
   | DoneToolInterface
   | StatsToolInterface
+  | MoveToolInterface
