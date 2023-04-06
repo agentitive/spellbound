@@ -12,6 +12,12 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     breaks: true,
   })
 
+  messagesToHumanReadable(messages: Message[]): string {
+    return messages
+      .map(message => `[${message.role === 'agent' ? 'Agent' : 'User'}]: ${message.content}`)
+      .join('\n')
+  }
+
   resolveWebviewView(webviewView: vscode.WebviewView) {
     webviewView.webview.options = {
       enableScripts: true,
@@ -29,20 +35,20 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         try {
           const saveUri = await vscode.window.showSaveDialog({
             filters: {
-              "JSON Files": ["json"]
+              "Text Files": ["txt"]
             },
             saveLabel: "Save Chat Messages",
             title: "Save Chat Messages As"
           })
 
           if (saveUri) {
-            await vscode.workspace.fs.writeFile(saveUri, Buffer.from(JSON.stringify(messages, null, 2)))
+            const formattedMessages = this.messagesToHumanReadable(messages)
+            await vscode.workspace.fs.writeFile(saveUri, Buffer.from(formattedMessages))
             vscode.window.showInformationMessage("Chat messages saved successfully.")
           }
         } catch (error) {
           vscode.window.showErrorMessage(`Error saving file: ${(error as Error).message}`)
         }
-        console.log("attempting to write: ", messages)
       }
     }, {
       post: data => {
