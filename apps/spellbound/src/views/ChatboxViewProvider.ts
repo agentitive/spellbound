@@ -63,18 +63,25 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     })
   }
 
-  private getChatboxHtml() {
-    const scriptFilename = "static/main.js"
-    const scriptUri = this.extensionUri.with({
-      path: this.extensionUri.path + "/" + scriptFilename,
-    })
-    const scriptText = readFileSync(scriptUri.fsPath, "utf8")
-
+  private getChatboxCss() {
     const stylesFilename = "static/main.css"
     const stylesUri = this.extensionUri.with({
       path: this.extensionUri.path + "/" + stylesFilename,
     })
-    const stylesText = readFileSync(stylesUri.fsPath, "utf8")
+    return readFileSync(stylesUri.fsPath, "utf8")
+  }
+
+  private getChatboxJs() {
+    const scriptFilename = "static/main.js"
+    const scriptUri = this.extensionUri.with({
+      path: this.extensionUri.path + "/" + scriptFilename,
+    })
+    return readFileSync(scriptUri.fsPath, "utf8")
+  }
+
+  private getChatboxHtml() {
+    const stylesText = this.getChatboxCss()
+    const scriptText = this.getChatboxJs()
 
     return /* html */`
       <!DOCTYPE html>
