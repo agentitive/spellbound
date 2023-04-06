@@ -25,8 +25,8 @@ Use the following tools:
 | ------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | cat {path}               | Read the content of a file at the given path.                                                                  |
 | ls {path, recursive?}    | List files and folders at the given path relative to workspace root.                                           |
-| search {topic}           | Search for a file or relevant information by topic, via vector embedding search.                               |
 | stats                    | List available vector embedding namespaces                                                                     |
+| {globs, regex}      | Perform a grep search with the specified list of glob patterns and a regex query.                              |
 | write {path, contents}   | Write (or overwrite) the given contents into the specified file. Takes a long time to execute for large files. |
 | replace {path, old, new} | Replace all occurrences of `old` with `new` in the specified file. Useful for quick edits.                     |
 | ask {question}           | Ask a question to the user.                                                                                    |
