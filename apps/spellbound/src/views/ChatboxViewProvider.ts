@@ -35,6 +35,7 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
         try {
           const saveUri = await vscode.window.showSaveDialog({
             filters: {
+              "Markdown Files": ["md"],
               "Text Files": ["txt"]
             },
             saveLabel: "Save Chat Messages",
