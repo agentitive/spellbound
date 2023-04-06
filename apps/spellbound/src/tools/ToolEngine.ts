@@ -8,6 +8,7 @@ import { replaceToolImpl } from "./replace/replaceToolImpl"
 import { searchToolImpl } from "./search/searchToolImpl"
 import { statsToolImpl } from "./stats/statsToolImpl"
 import { writeToolImpl } from "./write/writeToolImpl"
+import { diffToolImpl } from "./diff/diffToolImpl"
 
 export const ToolEngine = {
   ask: askToolImpl,
@@ -20,4 +21,5 @@ export const ToolEngine = {
   search: searchToolImpl,
   stats: statsToolImpl,
   write: writeToolImpl,
+  diff: diffToolImpl,
 }
