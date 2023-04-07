@@ -11,17 +11,54 @@ import { diffToolImpl } from "./diff/diffToolImpl"
 import { grepToolImpl } from "./grep/grepToolImpl"
 import { moveToolImpl } from "./move/moveToolImpl"
 
+
 export const ToolEngine = {
-  ask: askToolImpl,
-  cat: catToolImpl,
-  done: doneToolImpl,
-  ls: lsToolImpl,
-  npm: npmToolImpl,
-  git: gitToolImpl,
-  move: moveToolImpl,
-  search: searchToolImpl,
-  stats: statsToolImpl,
-  write: writeToolImpl,
-  diff: diffToolImpl,
-  grep: grepToolImpl,
-}
+  ask: [askToolImpl, 
+    "ask {question}", 
+    "Ask the user a question"],
+
+  cat: [catToolImpl, 
+    "cat {path}",
+    "Read the content of a file at the given path."],
+
+  done: [doneToolImpl,
+    "done",
+    "This '## Thought' is the final chain-of-reasoning conclusion."],
+
+  ls: [lsToolImpl,
+    "ls {regex}",
+    "List all files in the workspace with path matching the given regex."],
+
+  npm: [npmToolImpl,
+    "npm {script}",
+    "Run an npm script (e.g., `npm run [script]`)."],
+
+  git: [gitToolImpl,
+    "git {args}",
+    "Run an git command with optional arguments. End your commit messages with '(By SB)'"],
+
+  search: [searchToolImpl,
+    "search {topic}",
+    "Search for a topic in the vector-embedding database."],
+
+  stats: [statsToolImpl,
+    "stats",
+    "List available vector embedding namespaces"],
+
+  write: [writeToolImpl,
+    "write {path, contents}",
+    "Write (or overwrite) the given contents into the specified file. Takes a long time to large."],
+    
+  diff: [diffToolImpl,
+    "diff {source, patchStr}",
+    "For _modifying_ files. Takes filename and unified diff patch string."],
+
+  grep: [grepToolImpl,
+    "grep {regex, path?}",
+    "Perform a grep search with the specified list of glob patterns and a regex query."],
+
+  move: [moveToolImpl,
+    "move {source, dest}",
+    "Move a file or folder from source to destination. Paths relative to workspace root."]
+    
+} as const

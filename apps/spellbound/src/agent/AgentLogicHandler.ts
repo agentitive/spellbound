@@ -130,8 +130,8 @@ export class AgentLogicHandler {
 
     try {
       const tool = actionObject.tool
-      const result = await ToolEngine[tool](actionObject as never)
-      return result
+      const [impl] = ToolEngine[tool]
+      return await impl(actionObject as never)
     } catch (error) {
       return `ERROR: Unknown tool: ${(actionObject as any)?.tool}`
     }
