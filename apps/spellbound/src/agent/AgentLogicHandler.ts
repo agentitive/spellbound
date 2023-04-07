@@ -113,7 +113,7 @@ export class AgentLogicHandler {
     const toolResultOutput = `## Result\n\`\`\`\n${toolResult}\n\`\`\``
     await this.rpc.result(toolResultOutput)
     return {
-      role: 'assistant',
+      role: 'system',
       content: toolResultOutput,
     }
   }
