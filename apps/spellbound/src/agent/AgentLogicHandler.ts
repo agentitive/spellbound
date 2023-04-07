@@ -2,45 +2,33 @@ import * as vscode from 'vscode'
 
 import { BirpcReturn, Message, WebviewProcedures } from 'spellbound-shared'
 import { fillPrompt } from '../prompts/fillPrompt'
-import { streamInference } from '../api/openai'
 import YAML from 'yaml'
 import { AnyToolInterface } from '../tools/AnyToolInterface'
 import { ToolEngine } from '../tools/ToolEngine'
+import { InferenceService } from '../inference/InferenceHandler'
 
 export class AgentLogicHandler {
-  abortFlag = false
+  aborted = false
+  inferences: InferenceService
 
-  constructor(private readonly rpc: BirpcReturn<WebviewProcedures, {}>) { }
+  constructor(private readonly rpc: BirpcReturn<WebviewProcedures, {}>) { 
+    this.inferences = new InferenceService()
+  }
 
-  async handleSendPrompt(messages: Message[]) {
+  async abort() {
+    this.aborted = true
+    this.inferences.abort()
+    await this.rpc.finish()
+  }
+
+  async promptAgent(messages: Message[]) {
     const updatedMessages = await this.createUpdatedMessages(messages)
-
-    const onStart = async () => {
-      if (!this.abortFlag) {
-        await this.onStartHandler()
-      }
-    }
-
-    let buffer = ''
-
-    const onData = async (output: string) => {
-      if (!this.abortFlag) {
-        buffer = await this.onDataHandler(buffer, output)
-      }
-    }
-
-    const onEnd = async () => {
-      if (!this.abortFlag) {
-        await this.onEndHandler(buffer, messages)
-      }
-    }
-
-    onStart()
-
-    await streamInference(updatedMessages, {
-      onData,
-      onEnd,
-    })
+    this.aborted = false
+    this.inferences.infer(
+      updatedMessages, 
+      () => this.onStartHandler(), 
+      (data: string) => this.onDataHandler(data),
+      (result: string) => this.onEndHandler(messages, result))
   }
 
   private async createUpdatedMessages(messages: Message[]): Promise<Message[]> {
@@ -62,36 +50,52 @@ export class AgentLogicHandler {
     await this.rpc.start()
   }
 
-  private async onDataHandler(buffer: string, output: string): Promise<string> {
-    buffer += output
+  private async onDataHandler(output: string) {
     await this.rpc.update(output)
-    return buffer
   }
 
-  private async onEndHandler(buffer: string, messages: Message[]) {
+  private async onEndHandler(messages: Message[], result: string) {
     await this.rpc.finish()
 
-    this.handleToolMessage([...messages, {
-      role: 'assistant',
-      content: buffer,
-    }])
+    if (this.aborted) {
+      return
+    }
+    
+    this.handleToolMessage([
+      ...messages, 
+      {
+        role: 'assistant',
+        content: result,
+      }
+    ])
   }
 
+  private async sendResultMessage(messages: Message[], toolResult: string) {
+    const resultMessage = await this.createResultMessage(toolResult)
+    await this.rpc.result(resultMessage.content)
+
+    if (!this.aborted) { // TODO: make this a setting "run until done"
+      // this causes the agent to respond to result messages
+      await this.promptAgent([...messages, resultMessage])
+    }
+  }  
+
   private async handleToolMessage(messages: Message[]) {
+    if (this.aborted) {
+      return
+    }
+
     const actionObject = await this.extractActionObject(messages)
     if (actionObject) {
       const toolResult = await this.executeToolAction(actionObject)
 
       if (toolResult) {
-        const resultMessage = await this.createResultMessage(toolResult)
-        await this.handleSendPrompt([...messages, resultMessage])
+        await this.sendResultMessage(messages, toolResult)
       }
     } else {
       const warningResult = `No tool action found in message.`
       console.warn("warningResult:", messages[messages.length - 1].content)
-      // TODO: make this a setting "run until done"
-      const resultMessage = await this.createResultMessage(warningResult)
-      await this.handleSendPrompt([...messages, resultMessage])
+      await this.sendResultMessage(messages, warningResult)
     }
   }
 
@@ -115,8 +119,7 @@ export class AgentLogicHandler {
           return await this.rpc.result(errorMessage)
         }
 
-        const resultMessage = await this.createResultMessage(errorMessage)
-        await this.handleSendPrompt([...messages, resultMessage])
+        await this.sendResultMessage(messages, errorMessage)
       }
     }
     return null
@@ -124,7 +127,6 @@ export class AgentLogicHandler {
 
   private async createResultMessage(toolResult: string): Promise<Message> {
     const toolResultOutput = `## Result\n\`\`\`\n${toolResult}\n\`\`\``
-    await this.rpc.result(toolResultOutput)
     return {
       role: 'system',
       content: toolResultOutput,

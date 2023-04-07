@@ -29,11 +29,10 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
     const agentLogicHandler = new AgentLogicHandler(
       createBirpc<WebviewProcedures>({
         abort: () => {
-          agentLogicHandler.abortFlag = true
+          agentLogicHandler.abort() 
         },
         submit: async (messages: Message[]) => {
-          agentLogicHandler.abortFlag = false
-          return await agentLogicHandler.handleSendPrompt(messages)
+          agentLogicHandler.promptAgent(messages)
         },
         saveToFile: async (messages: Message[]) => {
           try {
