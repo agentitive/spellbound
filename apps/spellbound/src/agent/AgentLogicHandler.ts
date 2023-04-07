@@ -8,23 +8,31 @@ import { AnyToolInterface } from '../tools/AnyToolInterface'
 import { ToolEngine } from '../tools/ToolEngine'
 
 export class AgentLogicHandler {
+  abortFlag = false
+
   constructor(private readonly rpc: BirpcReturn<WebviewProcedures, {}>) { }
 
   async handleSendPrompt(messages: Message[]) {
     const updatedMessages = await this.createUpdatedMessages(messages)
 
     const onStart = async () => {
-      await this.onStartHandler()
+      if (!this.abortFlag) {
+        await this.onStartHandler()
+      }
     }
 
     let buffer = ''
 
     const onData = async (output: string) => {
-      buffer = await this.onDataHandler(buffer, output)
+      if (!this.abortFlag) {
+        buffer = await this.onDataHandler(buffer, output)
+      }
     }
 
     const onEnd = async () => {
-      await this.onEndHandler(buffer, messages)
+      if (!this.abortFlag) {
+        await this.onEndHandler(buffer, messages)
+      }
     }
 
     onStart()
