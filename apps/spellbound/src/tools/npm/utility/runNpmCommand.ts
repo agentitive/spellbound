@@ -1,23 +1,21 @@
 import { exec } from "child_process"
+import * as vscode from "vscode"
 
 export async function runNpmCommand(
-  script: string,
-  cwd: string
+  args: string,
 ): Promise<string> {
-  // Validate that 'script' doesn't contain ; or &
-  if (script.includes(";") || script.includes("&")) {
-    return `ERROR: Invalid npm script: ${script}`
-  }
-
   return new Promise((resolve, reject) => {
     // Execute the npm command in the provided working directory
-    exec(`npm run ${script}`, { cwd }, (error, stdout, stderr) => {
+    exec(`npm ${args}`, {
+      // workspace root
+      cwd: vscode.workspace.workspaceFolders?.[0].uri.fsPath,
+    }, (error, stdout, stderr) => {
       if (error) {
-        const errorMessage = `ERROR: Failed to run npm command: ${script}\n${stderr}`
+        const errorMessage = `ERROR: Failed to run npm command: ${args}\n${stdout}\n${stderr}`
         console.error(errorMessage)
         resolve(errorMessage)
       } else {
-        const successMessage = `Successfully ran npm command: ${script}\n${stdout}`
+        const successMessage = `Successfully ran npm command: ${args}\n${stdout}\n${stderr}`
         resolve(successMessage)
       }
     })
