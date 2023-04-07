@@ -7,10 +7,11 @@ import { rpc } from "../../utilities/rpc";
 import useStore from "../../store";
 
 export function InputPanel() {
-  const { addMessage, messages, isThinking } = useStore(state => ({
+  const { addMessage, messages, isThinking, setIsThinking } = useStore(state => ({
     addMessage: state.addMessage,
     messages: state.messages,
-    isThinking: state.isThinking
+    isThinking: state.isThinking,
+    setIsThinking: state.setIsThinking,
   }))
   const [input, setInput] = useState("");
 
@@ -24,6 +25,11 @@ export function InputPanel() {
       await rpc.submit(newMessages)
       setInput("")
     }
+  }
+
+  const onAbort = async () => {
+    await rpc.abort()
+    setIsThinking(false)
   }
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -51,11 +57,16 @@ export function InputPanel() {
         onClick={onClick}
         disabled={isThinking}
       >Send</button>
-      <button
+      {isThinking && <button
+            className={styles.abort}
+            onClick={onAbort}>
+        Abort
+      </button>}
+      {!isThinking && <button
         className={styles.export}
         onClick={saveToFile}
         disabled={isThinking}
-      >Export</button>
+      >Export</button>}
     </div>
   );
 }
