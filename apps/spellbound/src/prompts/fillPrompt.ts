@@ -12,7 +12,9 @@ type FillPromptParams = {
   current_file_contents?: string | undefined
 }
 
-export async function fillPrompt(params: FillPromptParams): Promise<string> {
+export async function fillPrompt(params?: Partial<FillPromptParams>): Promise<string> {
+  params = params || {}
+
   const activeTextEditor = vscode.window.activeTextEditor
 
   // Get the workspace folder path
