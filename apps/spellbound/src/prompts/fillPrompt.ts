@@ -82,8 +82,10 @@ export async function fillPrompt(params?: Partial<FillPromptParams>): Promise<st
   // Fill out the prompt
   const filledPrompt = ejs.render(sourcePrompt, {
     ...params, 
-    toolList: renderToolList(ToolEngine),
+    toolList: renderToolList(ToolEngine).join("\n"),
   })
+
+  console.log("prompt", filledPrompt)
 
   return filledPrompt
 }
