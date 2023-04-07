@@ -38,22 +38,14 @@ I need to find the file that contains the function that is called when the user 
 
 ### `tool`
 
-```
 diff
-```
 
 ### `source`
 
-```
 src/components/SubmitButton.js
-```
 
 ### `patchStr`
 
-````
-
-```diff
 @@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
-````
