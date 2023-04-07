@@ -6,10 +6,6 @@ import { indexFolder } from "./commands/indexFolder"
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Your extension "spellbound" is now active!')
 
-  await vscode.commands.executeCommand(
-    "workbench.action.webview.openDeveloperTools"
-  )
-
   const chatboxViewProvider = new ChatboxViewProvider(context.extensionUri)
 
   context.subscriptions.push(
@@ -19,7 +15,7 @@ export async function activate(context: vscode.ExtensionContext) {
       {
         webviewOptions: {
           retainContextWhenHidden: true,
-        }
+        },
       }
     )
   )
@@ -34,4 +30,4 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
