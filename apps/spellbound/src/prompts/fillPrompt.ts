@@ -2,6 +2,8 @@ import * as vscode from "vscode"
 import ejs from "ejs"
 import { promises as fs } from "fs"
 import path from "path"
+import { AnyToolInterface } from "../tools/AnyToolInterface"
+import { ToolEngine } from "../tools/ToolEngine"
 
 type FillPromptParams = {
   codebase_description?: string | undefined
@@ -10,6 +12,13 @@ type FillPromptParams = {
   current_file_name?: string | undefined
   langcode?: string | undefined
   current_file_contents?: string | undefined
+}
+
+// render unordered list of tools
+function renderToolList(tools: Partial<typeof ToolEngine>) {
+  return Object.values(tools).map(([_, sig, doc]) => {
+    return `- ${sig}: ${doc}`
+  })
 }
 
 export async function fillPrompt(params?: Partial<FillPromptParams>): Promise<string> {
@@ -71,7 +80,10 @@ export async function fillPrompt(params?: Partial<FillPromptParams>): Promise<st
   const sourcePrompt = await fs.readFile(promptFilePath, "utf-8")
 
   // Fill out the prompt
-  const filledPrompt = ejs.render(sourcePrompt, params)
+  const filledPrompt = ejs.render(sourcePrompt, {
+    ...params, 
+    toolList: renderToolList(ToolEngine),
+  })
 
   return filledPrompt
 }
