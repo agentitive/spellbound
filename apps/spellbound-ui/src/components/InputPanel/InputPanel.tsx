@@ -17,7 +17,7 @@ export function InputPanel() {
   const onClick = async () => {
     const prompt = input.trim()
     if (prompt) {
-      const newMessage = { role: "system", content: prompt }
+      const newMessage = { role: "user", content: prompt }
       addMessage(newMessage)
       const newMessages = [...messages, newMessage]
       console.log("submitting new messages...")
