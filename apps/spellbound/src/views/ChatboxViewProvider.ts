@@ -26,41 +26,46 @@ export class ChatboxViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getChatboxHtml()
 
-    const rpc = createBirpc<WebviewProcedures>({
-      submit: async (messages: Message[]) => {
-        const agentLogicHandler = new AgentLogicHandler(rpc)
-        return await agentLogicHandler.handleSendPrompt(messages)
-      },
-      saveToFile: async (messages: Message[]) => {
-        try {
-          const saveUri = await vscode.window.showSaveDialog({
-            filters: {
-              "Markdown Files": ["md"],
-              "Text Files": ["txt"]
-            },
-            saveLabel: "Save Chat Messages",
-            title: "Save Chat Messages As"
-          })
+    const agentLogicHandler = new AgentLogicHandler(
+      createBirpc<WebviewProcedures>({
+        abort: () => {
+          agentLogicHandler.abortFlag = true
+        },
+        submit: async (messages: Message[]) => {
+          agentLogicHandler.abortFlag = false
+          return await agentLogicHandler.handleSendPrompt(messages)
+        },
+        saveToFile: async (messages: Message[]) => {
+          try {
+            const saveUri = await vscode.window.showSaveDialog({
+              filters: {
+                "Markdown Files": ["md"],
+                "Text Files": ["txt"]
+              },
+              saveLabel: "Save Chat Messages",
+              title: "Save Chat Messages As"
+            })
 
-          if (saveUri) {
-            const formattedMessages = this.messagesToHumanReadable(messages)
-            await vscode.workspace.fs.writeFile(saveUri, Buffer.from(formattedMessages))
-            vscode.window.showInformationMessage("Chat messages saved successfully.")
+            if (saveUri) {
+              const formattedMessages = this.messagesToHumanReadable(messages)
+              await vscode.workspace.fs.writeFile(saveUri, Buffer.from(formattedMessages))
+              vscode.window.showInformationMessage("Chat messages saved successfully.")
+            }
+          } catch (error) {
+            vscode.window.showErrorMessage(`Error saving file: ${(error as Error).message}`)
           }
-        } catch (error) {
-          vscode.window.showErrorMessage(`Error saving file: ${(error as Error).message}`)
         }
-      }
-    }, {
-      post: data => {
-        webviewView.webview.postMessage(data)
-      },
-      on: data => {
-        webviewView.webview.onDidReceiveMessage(e => {
-          data(e)
-        })
-      },
-    })
+      }, {
+        post: data => {
+          webviewView.webview.postMessage(data)
+        },
+        on: data => {
+          webviewView.webview.onDidReceiveMessage(e => {
+            data(e)
+          })
+        },
+      })
+    )
   }
 
   private getChatboxCss() {
