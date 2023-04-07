@@ -30,8 +30,8 @@ export const ToolEngine = {
     "List all files in the workspace with path matching the given regex."],
 
   npm: [npmToolImpl,
-    "npm {script}",
-    "Run an npm script (e.g., `npm run [script]`)."],
+    "npm {args}",
+    "Run an npm command (e.g., `npm i some-package`)."],
 
   git: [gitToolImpl,
     "git {args}",

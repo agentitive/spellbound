@@ -3,7 +3,7 @@ import { runNpmCommand } from "./utility/runNpmCommand"
 import { NpmToolInterface } from "./NpmToolInterface"
 
 export async function npmToolImpl(params: NpmToolInterface): Promise<string> {
-  const { script } = params
+  const { args } = params
 
   // Base off of workspace directory
   const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath
@@ -13,5 +13,5 @@ export async function npmToolImpl(params: NpmToolInterface): Promise<string> {
   }
 
   // Use the helper function to run the npm script
-  return await runNpmCommand(script, workspacePath)
+  return await runNpmCommand(args)
 }
