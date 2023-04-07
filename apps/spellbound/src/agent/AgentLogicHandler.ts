@@ -1,14 +1,24 @@
-import * as vscode from 'vscode'
+import { BirpcReturn, Message, WebviewProcedures } from "spellbound-shared"
+import { fillPrompt } from "../prompts/fillPrompt"
+import { streamInference } from "../api/openai"
+import { AnyToolInterface } from "../tools/AnyToolInterface"
+import { ToolEngine } from "../tools/ToolEngine"
 
-import { BirpcReturn, Message, WebviewProcedures } from 'spellbound-shared'
-import { fillPrompt } from '../prompts/fillPrompt'
-import { streamInference } from '../api/openai'
-import YAML from 'yaml'
-import { AnyToolInterface } from '../tools/AnyToolInterface'
-import { ToolEngine } from '../tools/ToolEngine'
+function parseMessage(input: string) {
+  const regex = /### `(\w+)`\n\n([^]+?)(?=\n##|\n###|$)/g
+  const matches = Array.from(input.matchAll(regex))
+
+  const parsedObject: Record<string, string> = {}
+  matches.forEach(([_, key, value]) => {
+    const cleanValue = value.trim().replace(/^```[\w]*\n([^]+)\n```$/, "$1")
+    parsedObject[key] = cleanValue
+  })
+
+  return parsedObject
+}
 
 export class AgentLogicHandler {
-  constructor(private readonly rpc: BirpcReturn<WebviewProcedures, {}>) { }
+  constructor(private readonly rpc: BirpcReturn<WebviewProcedures, {}>) {}
 
   async handleSendPrompt(messages: Message[]) {
     const updatedMessages = await this.createUpdatedMessages(messages)
@@ -17,7 +27,7 @@ export class AgentLogicHandler {
       await this.onStartHandler()
     }
 
-    let buffer = ''
+    let buffer = ""
 
     const onData = async (output: string) => {
       buffer = await this.onDataHandler(buffer, output)
@@ -36,14 +46,14 @@ export class AgentLogicHandler {
   }
 
   private async createUpdatedMessages(messages: Message[]): Promise<Message[]> {
-    const userMessages = messages.filter(m => m.role === 'user')
+    const userMessages = messages.filter((m) => m.role === "user")
     const filledPrompt = await fillPrompt({
       task: userMessages[userMessages.length - 1].content,
     })
 
     return [
       {
-        role: 'system',
+        role: "system",
         content: filledPrompt,
       },
       ...messages,
@@ -63,10 +73,13 @@ export class AgentLogicHandler {
   private async onEndHandler(buffer: string, messages: Message[]) {
     await this.rpc.finish()
 
-    this.handleToolMessage([...messages, {
-      role: 'assistant',
-      content: buffer,
-    }])
+    this.handleToolMessage([
+      ...messages,
+      {
+        role: "assistant",
+        content: buffer,
+      },
+    ])
   }
 
   private async handleToolMessage(messages: Message[]) {
@@ -87,30 +100,17 @@ export class AgentLogicHandler {
     }
   }
 
-  private async extractActionObject(messages: Message[]) {
+  private async extractActionObject(
+    messages: Message[]
+  ): Promise<AnyToolInterface | null> {
     const lastMessage = messages[messages.length - 1]
-    const actionRegex = /^\s*##\s*Action\s*\n+```[\s\S]*?\n([^]+?)```/gm
-    const match = actionRegex.exec(lastMessage.content)
 
-    if (match) {
-      try {
-        return YAML.parse(match[1], { strict: false })
-      } catch (err: any) {
-        console.error('FULL_MESSAGE', lastMessage.content)
-        console.error('REGEX_MATCH', match[1])
-        console.error('Error parsing tool action:', err)
-        // get the extension setting .agent.stopOnError
-        const errorMessage = `ERROR: Could not parse tool action: ${err?.message}`
+    const parameters = parseMessage(lastMessage.content)
 
-        const stopOnError = vscode.workspace.getConfiguration('spellbound').get('agent.stopOnError')
-        if (stopOnError) {
-          return await this.rpc.result(errorMessage)
-        }
-
-        const resultMessage = await this.createResultMessage(errorMessage)
-        await this.handleSendPrompt([...messages, resultMessage])
-      }
+    if (parameters.tool) {
+      return parameters as AnyToolInterface
     }
+
     return null
   }
 
@@ -118,12 +118,14 @@ export class AgentLogicHandler {
     const toolResultOutput = `## Result\n\`\`\`\n${toolResult}\n\`\`\``
     await this.rpc.result(toolResultOutput)
     return {
-      role: 'system',
+      role: "system",
       content: toolResultOutput,
     }
   }
 
-  private async executeToolAction(actionObject: AnyToolInterface): Promise<string | undefined> {
+  private async executeToolAction(
+    actionObject: AnyToolInterface
+  ): Promise<string | undefined> {
     if (!actionObject.tool) {
       return
     }
