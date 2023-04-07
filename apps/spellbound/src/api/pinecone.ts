@@ -80,7 +80,11 @@ export const upsertFolder = async (
   const files = (await runGitCommand("ls-files"))
     .split("\n")
     .slice(1, -1)
-    .filter((x) => !IGNORED_EXTENSIONS.includes(path.extname(x)))
+    .filter(
+      (x) =>
+        !IGNORED_EXTENSIONS.includes(path.extname(x)) &&
+        !x.endsWith("package-lock.json")
+    )
 
   const workspace = getCurrentWorkspaceFolder()
   const absoluteFiles = files.map((f) => join(workspace, f))
