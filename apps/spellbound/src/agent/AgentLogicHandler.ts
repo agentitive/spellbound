@@ -36,16 +36,17 @@ export class AgentLogicHandler {
   }
 
   private async createUpdatedMessages(messages: Message[]): Promise<Message[]> {
+    const userMessages = messages.filter(m => m.role === 'user')
     const filledPrompt = await fillPrompt({
-      task: messages[0].content,
+      task: userMessages[userMessages.length - 1].content,
     })
 
     return [
       {
-        role: messages[0].role,
+        role: 'system',
         content: filledPrompt,
       },
-      ...messages.slice(1),
+      ...messages,
     ]
   }
 
@@ -78,7 +79,11 @@ export class AgentLogicHandler {
         await this.handleSendPrompt([...messages, resultMessage])
       }
     } else {
-      console.error('No tool action found in message:\n\n', messages[messages.length - 1].content)
+      const warningResult = `No tool action found in message.`
+      console.warn("warningResult:", messages[messages.length - 1].content)
+      // TODO: make this a setting "run until done"
+      const resultMessage = await this.createResultMessage(warningResult)
+      await this.handleSendPrompt([...messages, resultMessage])
     }
   }
 
