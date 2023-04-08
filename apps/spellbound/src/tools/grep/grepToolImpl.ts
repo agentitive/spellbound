@@ -8,7 +8,7 @@ type GrepResult = {
 }
 
 export async function grepToolImpl({ regex, path }: GrepToolInterface) {
-  const result = await runGitCommand(`grep --exclude-standard --no-index -e '${regex}' -- ${path || '.'}`)
+  const result = await runGitCommand(`grep -n --exclude-standard --no-index -e '${regex}' -- ${path || '.'}`)
   if (result.startsWith('ERROR')) {
     return "No files found."
   }
