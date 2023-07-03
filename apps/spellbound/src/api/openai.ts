@@ -67,6 +67,17 @@ export async function listModels(apiKey: string): Promise<string[]> {
   }
 }
 
+type PossibleEndpointError = {
+  error?: {
+    message?: string | null
+    type?: string | null
+    param?: string | null
+    code?: string | null
+  } | null
+} | null
+
+const nonRetryErrorTypes = ["tokens", "invalid_request_error"]
+
 function parseCompletionDataChunk(buffer: Buffer): string {
   const contentDelimiter = "\n\n"
   const jsonDataPrefix = "data: "
@@ -91,6 +102,20 @@ function parseCompletionDataChunk(buffer: Buffer): string {
       }
     } else {
       if (chunk) {
+        let chunkObj: PossibleEndpointError = null
+
+        try {
+          chunkObj = JSON.parse(chunk)
+        } catch (error) {
+          console.error("Error parsing chunk:", chunk, error)
+        }
+
+        if (nonRetryErrorTypes.some((x) => x === chunkObj?.error?.type)) {
+          console.error("Fatal error, not retrying:", chunk)
+
+          throw chunkObj
+        }
+
         console.error("Unexpected chunk:", chunk)
       }
     }
