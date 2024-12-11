@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkagentitive_site=self.webpackChunkagentitive_site||[]).push([[267],{8289:e=>{e.exports=JSON.parse('[{"label":"news","permalink":"/blog/tags/news","count":1}]')}}]);
