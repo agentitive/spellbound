@@ -1,6 +1,5 @@
-import { PineconeClient } from "@pinecone-database/pinecone"
+import { Pinecone } from "@pinecone-database/pinecone"
 import { getPineconeIndex } from "../environment/getPineconeIndex"
-import { getPineconeEnvironment } from "../environment/getPineconeEnvironment"
 import { getPineconeKey } from "../environment/getPineconeKey"
 import { embedChunks } from "./openai"
 import {
@@ -8,7 +7,6 @@ import {
   IGNORED_EXTENSIONS,
   chunkFile,
   chunkFiles,
-  chunkFolder,
 } from "../utils/chunking"
 import { createUUID } from "../utils/uuid"
 import { runGitCommand } from "../tools/git/utility/runGitCommand"
@@ -16,10 +14,7 @@ import { getCurrentWorkspaceFolder } from "../utils/getCurrentWorkspaceFolder"
 import path, { join } from "path"
 
 const createClient = async () => {
-  const pinecone = new PineconeClient()
-
-  await pinecone.init({
-    environment: getPineconeEnvironment()!,
+  const pinecone = new Pinecone({
     apiKey: getPineconeKey()!,
   })
 
@@ -50,11 +45,7 @@ const upsertChunks = async (chunks: Chunk[], namespace = "", metadata = {}) => {
   console.log(`Upserting chunks:`)
   for (let i = 0; i < vectors.length; i += 100) {
     console.log(`  ${i} - ${i + 100} of ${vectors.length}`)
-    const upsertRequest = {
-      vectors: vectors.slice(i, i + 100),
-      namespace,
-    }
-    await index.upsert({ upsertRequest })
+    await index.upsert(vectors.slice(i, i + 100))
   }
 }
 
@@ -97,8 +88,7 @@ export const upsertFolder = async (
 export const query = async (
   vector: number[],
   topK: number,
-  filter = undefined,
-  namespace = ""
+  filter = undefined
 ) => {
   const client = await createClient()
   const indexName = getPineconeIndex()
@@ -107,25 +97,27 @@ export const query = async (
     vector,
     topK,
     filter,
-    namespace,
     includeMetadata: true,
     includeValues: false,
   }
 
-  return index.query({ queryRequest })
+  return index.query(queryRequest)
 }
 
-export const clearNamespace = async (namespace = "") => {
+export const clearNamespace = async () => {
   const client = await createClient()
   const indexName = getPineconeIndex()
-  const index = client.Index(indexName!)
-  return index.delete1({ deleteAll: true, namespace })
+  // const index = client.index(indexName!)
+
+  // try {
+  //   await index.deleteAll()
+  // } catch (error) {
+  //   console.error(error)
+  // }
 }
 
 // run DescribeIndexStats
 export const indexStats = async () => {
   const index = await getIndex()
-  return index.describeIndexStats({
-    describeIndexStatsRequest: {},
-  })
+  return index.describeIndexStats()
 }

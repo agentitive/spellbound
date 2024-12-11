@@ -27,13 +27,12 @@ Spellbound uses a "thought/action" control loop to create an autonomous coding a
 
 ## Extension Settings
 
-| Parameter                       | Description                                           | Default | Scope   |
-| ------------------------------- | ----------------------------------------------------- | ------- | ------- |
-| spellbound.model                | Select the AI model used by the Spellbound extension  | gpt-4   |         |
-| spellbound.openai_api_key       | Enter your OpenAI API key here, used for inference.   |         | machine |
-| spellbound.pinecone_api_key     | Enter your Pinecone API key here, used for search.    |         | machine |
-| spellbound.pinecone_index       | Enter your Pinecone index name here, used for search  |         | machine |
-| spellbound.pinecone_environment | Enter your Pinecone environment here, used for search |         | machine |
+| Parameter                   | Description                                          | Default | Scope   |
+| --------------------------- | ---------------------------------------------------- | ------- | ------- |
+| spellbound.model            | Select the AI model used by the Spellbound extension | gpt-4   |         |
+| spellbound.openai_api_key   | Enter your OpenAI API key here, used for inference.  |         | machine |
+| spellbound.pinecone_api_key | Enter your Pinecone API key here, used for search.   |         | machine |
+| spellbound.pinecone_index   | Enter your Pinecone index name here, used for search |         | machine |
 
 ### Configuring Settings
 

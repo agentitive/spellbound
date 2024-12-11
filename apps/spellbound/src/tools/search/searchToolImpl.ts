@@ -3,7 +3,7 @@ import { query } from "../../api/pinecone"
 
 import { SearchToolInterface } from "./SearchToolInterface"
 import { makeRelative } from "../../utils/paths"
-import { ScoredVector } from "@pinecone-database/pinecone"
+import { ScoredPineconeRecord } from "@pinecone-database/pinecone"
 
 type Score = { max: number; avg: number }
 
@@ -15,7 +15,7 @@ const byKey = (scores: Record<string, Score>, key: keyof Score) => {
   })
 }
 
-const calculateScores = (matches: ScoredVector[]) => {
+const calculateScores = (matches: ScoredPineconeRecord[]) => {
   const scores: Record<string, { max: number; avg: number }> = {}
 
   for (const result of matches || []) {
@@ -31,7 +31,7 @@ const calculateScores = (matches: ScoredVector[]) => {
 
 export async function searchToolImpl(params: SearchToolInterface) {
   const embedding = await getEmbedding(params.topic)
-  const results = await query(embedding, 5, undefined, "code")
+  const results = await query(embedding, 5, undefined)
 
   const scores = calculateScores(results.matches || [])
 

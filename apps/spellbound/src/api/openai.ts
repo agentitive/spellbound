@@ -219,7 +219,7 @@ export const getEmbedding = async (text: string): Promise<number[]> => {
     },
     body: JSON.stringify({
       input: text,
-      model: "text-embedding-ada-002",
+      model: "text-embedding-3-large",
     }),
   })
 
@@ -237,7 +237,7 @@ export const getEmbeddings = async (texts: string[]): Promise<number[][]> => {
     },
     body: JSON.stringify({
       input: texts,
-      model: "text-embedding-ada-002",
+      model: "text-embedding-3-large",
     }),
   })
 

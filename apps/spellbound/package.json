@@ -48,11 +48,6 @@
           "default": "spellbound",
           "description": "Enter your Pinecone index name here, used for search."
         },
-        "spellbound.pinecone_environment": {
-          "type": "string",
-          "default": "",
-          "description": "Enter your Pinecone environment here, used for search."
-        },
         "spellbound.model": {
           "type": "string",
           "default": "gpt-4",
@@ -123,7 +118,7 @@
     "@types/diff": "~5.0.3"
   },
   "dependencies": {
-    "@pinecone-database/pinecone": "^0.0.12",
+    "@pinecone-database/pinecone": "~4.0.0",
     "spellbound-shared": "workspace:^0.0.3",
     "ejs": "^3.1.9",
     "ignore": "^5.2.4",

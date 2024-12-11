@@ -4,7 +4,7 @@ import { makeAbsolute } from "../utils/paths"
 
 export const indexWorkspace = async () => {
   try {
-    await clearNamespace("code")
+    await clearNamespace()
     vscode.window.showInformationMessage("Indexing workspace...")
 
     await upsertFolder(makeAbsolute("."), 100, 10, {}, "code")
