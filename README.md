@@ -27,12 +27,12 @@ Spellbound uses a "thought/action" control loop to create an autonomous coding a
 
 ## Extension Settings
 
-| Parameter                       | Description                                          | Default | Scope   |
-| ------------------------------- | ---------------------------------------------------- | ------- | ------- |
-| spellbound.model                | Select the AI model used by the Spellbound extension | gpt-4   |         |
-| spellbound.openai_api_key       | Enter your OpenAI API key here, used for inference.  |         | machine |
-| spellbound.pinecone_api_key     | Enter your Pinecone API key here, used for search.   |         | machine |
-| spellbound.pinecone_index       | Enter your Pinecone index name here, used for search |         | machine |
+| Parameter                       | Description                                           | Default | Scope   |
+| ------------------------------- | ----------------------------------------------------- | ------- | ------- |
+| spellbound.model                | Select the AI model used by the Spellbound extension  | gpt-4   |         |
+| spellbound.openai_api_key       | Enter your OpenAI API key here, used for inference.   |         | machine |
+| spellbound.pinecone_api_key     | Enter your Pinecone API key here, used for search.    |         | machine |
+| spellbound.pinecone_index       | Enter your Pinecone index name here, used for search  |         | machine |
 | spellbound.pinecone_environment | Enter your Pinecone environment here, used for search |         | machine |
 
 ### Configuring Settings
@@ -71,37 +71,3 @@ To set up the local development environment for the Spellbound extension, see th
 ## License
 
 Spellbound is released under the MIT License. See the LICENSE file for the full license text.
-
-## Poem
-
-> In a world of magic and wonder,
-> Where codes take form as lightning and thunder,
-> A spellbound whisper echoes in the night,
-> As programmers harness the AI's might.
-
-> Lines of syntax blend and intertwine,
-> Raising structures with power divine,
-> The keystrokes dance, a graceful ballet,
-> As Spellbound weaves its enchanted array.
-
-> Moments of thought guide an intricate plan,
-> As the codebase expands, its reach it will span,
-> The AI and humans work side by side,
-> In the realm of Spellbound, their brilliance will collide.
-
-> From simple beginnings to a grand design,
-> Spellbound empowers, transcending the line,
-> A masterpiece found by the ones who dare,
-> To embrace the magic, this bond that we share.
-
-```sh
-
-╭━━━╮╱╱╱╱╱╱╱╱╭╮╱╭╮╱╭╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
-┃╭━╮┃╱╱╱╱╱╱╱╱┃┃╱┃┃╱┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱┃┃
-┃╰━━╮╭━━╮╭━━╮┃┃╱┃┃╱┃╰━╮╭━━╮╭╮╭╮╭━╮╱╭━╯┃
-╰━━╮┃┃╭╮┃┃┃━┫┃┃╱┃┃╱┃╭╮┃┃╭╮┃┃┃┃┃┃╭╮╮┃╭╮┃
-┃╰━╯┃┃╰╯┃┃┃━┫┃╰╮┃╰╮┃╰╯┃┃╰╯┃┃╰╯┃┃┃┃┃┃╰╯┃
-╰━━━╯┃╭━╯╰━━╯╰━╯╰━╯╰━━╯╰━━╯╰━━╯╰╯╰╯╰━━╯
-╱╱╱╱╱┃┃
-╱╱╱╱╱╰╯
-```
